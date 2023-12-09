@@ -12,18 +12,18 @@ class WeatherService {
   WeatherService({required this.apiKey});
 
   Future<Weather> getWeather(String cityName) async {
-    final url = '$BASE_URL?q=$cityName&appid=$apiKey&units=metric';
+    final url = '$BASE_URL?q=$cityName&appid=$apiKey&units=metric&lang=tr';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode != 200) {
-      throw Exception('Error getting weather for location');
+      throw Exception('Konumunuz için hava durumu bulunamadı');
     }
 
     return Weather.fromJson(jsonDecode(response.body));
   }
 
   Future<String> getCurrentCity() async {
-    //
+    // get permisson
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
