@@ -32,6 +32,8 @@ class _WeatherPageState extends State<WeatherPage> with _PageUtility{
   void initState() {
     super.initState();
     _fetchWeather();
+    _weather?.cityName ?? "London";
+    print(_weather?.cityName);
     print(_weather?.cityName);
     print(_weather?.temp);
     print(_weather?.mainCondition);
@@ -39,33 +41,38 @@ class _WeatherPageState extends State<WeatherPage> with _PageUtility{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: IconButton(iconSize: context.iconSize.normal,color: Colors.white,
-            onPressed: () {}, icon: const Icon(Icons.search_outlined)),
-        actions: [
-          IconButton(iconSize: context.iconSize.large,color: Colors.white,
-              onPressed: () {}, icon: const Icon(Icons.drag_handle_outlined))
-        ],
-      ),
-      body: Padding(
-        padding: context.padding.mediumSymmetricHorizontal,
-        child:  SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _cityText(context),
-              _dateText(context),
-              _degreeText(context),
-              _assetsAndWeatherInfoText(context),
-              _divider(context),
-              _bottomComponent(context)
-            ],
-          ),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Image.network("https://api.api-ninjas.com/v1/randomimage?category=nature"),
+        Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.black,
+              leading: IconButton(iconSize: context.iconSize.normal,color: Colors.white,
+                  onPressed: () {}, icon: const Icon(Icons.search_outlined)),
+              actions: [
+                IconButton(iconSize: context.iconSize.large,color: Colors.white,
+                    onPressed: () {}, icon: const Icon(Icons.drag_handle_outlined))
+              ],
+            ),
+            body: Padding(
+              padding: context.padding.mediumSymmetricHorizontal,
+              child:  SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _cityText(context),
+                    _dateText(context),
+                    _degreeText(context),
+                    _assetsAndWeatherInfoText(context),
+                    _divider(context),
+                    _bottomComponent(context)
+                  ],
+                ),
+              ),
+            )
         ),
-      )
+      ],
     );
   }
 }

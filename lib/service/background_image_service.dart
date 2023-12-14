@@ -6,7 +6,7 @@ class RndmBackGround {
   RndmBackGround() {
     url = 'https://api.api-ninjas.com/v1/randomimage?category=$category';
   }
-  ImageProvider getBackgroundImage() {
-    return Image.network(url).image;
+  Image getBackgroundImage() {
+    return Image.network(url);
   }
 }

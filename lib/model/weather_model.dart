@@ -1,5 +1,5 @@
 class Weather {
-  final String cityName;
+  late final String cityName;
   final double temp;
   final String mainCondition;
   final String descCondition;
