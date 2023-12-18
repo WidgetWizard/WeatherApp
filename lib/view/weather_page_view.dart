@@ -76,7 +76,7 @@ class _WeatherPageViewState extends State<WeatherPageView> with _PageUtility{
                     _degreeText(context),
                     _assetsAndWeatherInfoText(context),
                     _divider(context),
-                    _bottomComponent(context)
+                    _bottomComponent(context),
                   ],
                 ),
               ),
@@ -166,5 +166,3 @@ extension WeatherConditionExtension on WeatherCondition{
   }
 }
 
-//todo:sıkıntı var ona bak veri gelmiyor!
-//todo:suanda bi sorun yok gibi bunu bi test et bakalım!
