@@ -23,6 +23,7 @@ class WeatherService extends IWeatherService{
       final response = await http.get(Uri.parse(
           "$_baseUrl/weather?lat=$_latitude&lon=$_longitude&appid=$_apiKey"));
       if (response.statusCode == 200) {
+        print("response body :${response.body}");
         return WeatherModel.fromJson(jsonDecode(response.body));
       }
     }

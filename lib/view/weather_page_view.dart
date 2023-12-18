@@ -5,6 +5,7 @@ import 'package:weatherapp/product/extension/context/general.dart';
 import 'package:weatherapp/product/extension/context/icon_size.dart';
 import 'package:weatherapp/product/extension/context/padding.dart';
 import 'package:weatherapp/product/extension/context/size.dart';
+import 'package:weatherapp/service/background_image_service.dart';
 import 'package:weatherapp/service/weather_service.dart';
 
 import '../product/widgets/value_container.dart';
@@ -22,54 +23,66 @@ class _WeatherPageViewState extends State<WeatherPageView> with _PageUtility{
   bool isLoading = false;
   late final IWeatherService _weatherService;
   WeatherModel? _weatherModel;
+
   @override
   void initState() {
-    _weatherService = WeatherService(apiKey: _weatherApiKey, baseUrl: _baseUrl);
-    _weatherModel = WeatherModel();
     super.initState();
+    _weatherService = WeatherService(apiKey: _weatherApiKey, baseUrl: _baseUrl);
+    init().then((weather) {
+      print(weather?.cityName);
+    });
   }
 
-  Future<void> init() async {
+  Future<WeatherModel?> init() async {
     setState(() => isLoading = true);
     await _weatherService.getLocationWithPermission();
-    await fetchWeatherData();
-    setState(() => isLoading = false);
-  }
-
-  Future<void> fetchWeatherData() async {
-    setState(() async => _weatherModel = await _weatherService.getWeatherData());
+    WeatherModel? weather = await _weatherService.getWeatherData();
+    setState(() {
+      _weatherModel = weather;
+      isLoading = false;
+    });
+    return weather;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          leading: IconButton(iconSize: context.iconSize.normal,color: Colors.white,
-              onPressed: () {}, icon: const Icon(Icons.search_outlined)),
-          actions: [
-            IconButton(iconSize: context.iconSize.large,color: Colors.white,
-                onPressed: () {}, icon: const Icon(Icons.drag_handle_outlined))
-          ],
+    return Stack(
+      children: [
+        SizedBox(
+          width: context.sized.width,
+          height: context.sized.height,
+          child: Image.network(RndmBackGround().urlNinja,headers: RndmBackGround().dataNinja,fit: BoxFit.cover),
         ),
-        body: isLoading
-            ? const CircularProgressIndicator(color: Colors.black,)
-            : Padding(
-                padding: context.padding.mediumSymmetricHorizontal,
-                child: SafeArea(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _cityText(context),
-                      _dateText(context),
-                      _degreeText(context),
-                      _assetsAndWeatherInfoText(context),
-                      _divider(context),
-                      _bottomComponent(context)
-                    ],
-                  ),
+        Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.black,
+              leading: IconButton(iconSize: context.iconSize.normal,color: Colors.white,
+                  onPressed: () {}, icon: const Icon(Icons.search_outlined)),
+              actions: [
+                IconButton(iconSize: context.iconSize.large,color: Colors.white,
+                    onPressed: () {}, icon: const Icon(Icons.drag_handle_outlined))
+              ],
+            ),
+            body: isLoading
+                ? const CircularProgressIndicator(color: Colors.black,)
+                : Padding(
+              padding: context.padding.mediumSymmetricHorizontal,
+              child: SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _cityText(context),
+                    _dateText(context),
+                    _degreeText(context),
+                    _assetsAndWeatherInfoText(context),
+                    _divider(context),
+                    _bottomComponent(context)
+                  ],
                 ),
-              ));
+              ),
+            )),
+      ],
+    );
   }
 }
 
@@ -146,3 +159,12 @@ enum WeatherCondition{
   partsCloudy,
   haze,
 }
+
+extension WeatherConditionExtension on WeatherCondition{
+  void getWeatherCondition(){
+
+  }
+}
+
+//todo:sıkıntı var ona bak veri gelmiyor!
+//todo:suanda bi sorun yok gibi bunu bi test et bakalım!

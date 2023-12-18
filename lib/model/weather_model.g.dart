@@ -7,14 +7,26 @@ part of 'weather_model.dart';
 // **************************************************************************
 
 WeatherModel _$WeatherModelFromJson(Map<String, dynamic> json) => WeatherModel(
-      cityName: json['name'] + ',' + json['sys']['country'] as String?,
-      temp: (json['main']['temp'] as num?)?.toDouble(),
-      mainCondition: json['weather'][0]['main'] as String?,
-      descCondition: json['weather'][0]['description'] as String?,
-      wind: (json['wind']['speed'] as num?)?.toDouble(),
-      humidity: json['main']['humidity'] as int?,
-      rain: (json['rain'] != null ? json['rain']['1h'] : null as num?)?.toDouble(),
+      cityName: json['name'] + ',' + json['sys']['country'],
+      temp: json['main']['temp'],
+      mainCondition: json['weather'][0]['main'],
+      descCondition: json['weather'][0]['description'],
+      wind: json['wind']['speed'],
+      humidity: json['main']['humidity'],
+      rain: json['rain'] != null ? json['rain']['1h'] : null,
 );
+
+/*
+WeatherModel _$WeatherModelFromJson(Map<String, dynamic> json) => WeatherModel(
+      cityName: json['cityName'] as String?,
+      temp: (json['temp'] as num?)?.toDouble(),
+      mainCondition: json['mainCondition'] as String?,
+      descCondition: json['descCondition'] as String?,
+      wind: (json['wind'] as num?)?.toDouble(),
+      humidity: json['humidity'] as int?,
+      rain: (json['rain'] as num?)?.toDouble(),
+    );
+*/
 
 Map<String, dynamic> _$WeatherModelToJson(WeatherModel instance) =>
     <String, dynamic>{
