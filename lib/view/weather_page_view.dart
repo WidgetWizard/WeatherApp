@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weatherapp/model/weather_model.dart';
+import 'package:weatherapp/product/api/weather_api.dart';
 import 'package:weatherapp/product/extension/context/general.dart';
 import 'package:weatherapp/product/extension/context/icon_size.dart';
 import 'package:weatherapp/product/extension/context/padding.dart';
@@ -8,72 +9,67 @@ import 'package:weatherapp/service/weather_service.dart';
 
 import '../product/widgets/value_container.dart';
 
-class WeatherPage extends StatefulWidget {
-  const WeatherPage({super.key});
+class WeatherPageView extends StatefulWidget {
+  const WeatherPageView({super.key});
 
   @override
-  State<WeatherPage> createState() => _WeatherPageState();
+  State<WeatherPageView> createState() => _WeatherPageViewState();
 }
 
-class _WeatherPageState extends State<WeatherPage> with _PageUtility{
-  final _weatherService = WeatherService(apiKey: 'a83184836912e8c9215c7b7c8cecb56d');
-  Weather? _weather;
-  _fetchWeather() async {
-    final cityName = await _weatherService.getCurrentCity();
-    try {
-      final weather = await _weatherService.getWeather(cityName);
-      setState(() => _weather = weather);
-    } catch (e) {
-      print(e);
-    }
-  }
-
+class _WeatherPageViewState extends State<WeatherPageView> with _PageUtility{
+  final String _weatherApiKey = WeatherApi().getWeatherApi;
+  final String _baseUrl = "https://api.openweathermap.org/data/2.5";
+  bool isLoading = false;
+  late final IWeatherService _weatherService;
+  WeatherModel? _weatherModel;
   @override
   void initState() {
+    _weatherService = WeatherService(apiKey: _weatherApiKey, baseUrl: _baseUrl);
+    _weatherModel = WeatherModel();
     super.initState();
-    _fetchWeather();
-    _weather?.cityName ?? "London";
-    print(_weather?.cityName);
-    print(_weather?.cityName);
-    print(_weather?.temp);
-    print(_weather?.mainCondition);
+  }
+
+  Future<void> init() async {
+    setState(() => isLoading = true);
+    await _weatherService.getLocationWithPermission();
+    await fetchWeatherData();
+    setState(() => isLoading = false);
+  }
+
+  Future<void> fetchWeatherData() async {
+    setState(() async => _weatherModel = await _weatherService.getWeatherData());
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Image.network("https://api.api-ninjas.com/v1/randomimage?category=nature"),
-        Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.black,
-              leading: IconButton(iconSize: context.iconSize.normal,color: Colors.white,
-                  onPressed: () {}, icon: const Icon(Icons.search_outlined)),
-              actions: [
-                IconButton(iconSize: context.iconSize.large,color: Colors.white,
-                    onPressed: () {}, icon: const Icon(Icons.drag_handle_outlined))
-              ],
-            ),
-            body: Padding(
-              padding: context.padding.mediumSymmetricHorizontal,
-              child:  SafeArea(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _cityText(context),
-                    _dateText(context),
-                    _degreeText(context),
-                    _assetsAndWeatherInfoText(context),
-                    _divider(context),
-                    _bottomComponent(context)
-                  ],
-                ),
-              ),
-            )
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          leading: IconButton(iconSize: context.iconSize.normal,color: Colors.white,
+              onPressed: () {}, icon: const Icon(Icons.search_outlined)),
+          actions: [
+            IconButton(iconSize: context.iconSize.large,color: Colors.white,
+                onPressed: () {}, icon: const Icon(Icons.drag_handle_outlined))
+          ],
         ),
-      ],
-    );
+        body: isLoading
+            ? const CircularProgressIndicator(color: Colors.black,)
+            : Padding(
+                padding: context.padding.mediumSymmetricHorizontal,
+                child: SafeArea(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _cityText(context),
+                      _dateText(context),
+                      _degreeText(context),
+                      _assetsAndWeatherInfoText(context),
+                      _divider(context),
+                      _bottomComponent(context)
+                    ],
+                  ),
+                ),
+              ));
   }
 }
 

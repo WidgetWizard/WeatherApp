@@ -3,19 +3,19 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class WeatherService{
+import '../model/weather_model.dart';
+
+class WeatherServiceDeneme{
   final String? _apiKey;
-  final String? baseUrl = "https://api.openweathermap.org/data/2.5";
-  WeatherService({required String? apiKey}) : _apiKey = apiKey;
+  final String _baseUrl = "https://api.openweathermap.org/data/2.5";
+  WeatherServiceDeneme({required String? apiKey}) : _apiKey = apiKey;
   double? _latitude;
   double? _longitude;
-
-  Future<Map<String, dynamic>> getWeatherByCity({String? city}) async {
-    // final response = await http.get(Uri.parse("$baseUrl/weather?lat=44.34&lon=10.99&appid=$_apiKey"));
+  Future<WeatherModel> getWeatherByCity({String? city}) async {
     if(_longitude != null || _longitude != null){
-      final response = await http.get(Uri.parse("$baseUrl/weather?lat=$_latitude&lon=$_longitude&appid=$_apiKey"));
+      final response = await http.get(Uri.parse("$_baseUrl/weather?lat=$_latitude&lon=$_longitude&appid=$_apiKey"));
       if(response.statusCode == 200){
-        return json.decode(response.body);
+        return WeatherModel.fromJson(jsonDecode(response.body));
       }
       else{
         throw Exception('Failed to load weather data');
@@ -40,22 +40,6 @@ class WeatherService{
   }
 }
 
-/*void main() async {
-const apiKey = '6115faddcf9ab2b8482f888359404e88';
-const city = 'London';
-
-WeatherService weatherService = WeatherService(apiKey: apiKey);
-
-try {
-  weatherService.getLocation();
-  Map<String, dynamic> weatherData = await weatherService.getWeatherByCity(city);
-  print(weatherData);
-} catch (e) {
-  print('Hata: $e');
-}
-}*/
-
-
 void main(){
   runApp(const Main());
 }
@@ -70,13 +54,13 @@ class Main extends StatefulWidget {
 class _MainState extends State<Main> {
   bool isLoading = false;
   late final String _apiKey;
-  late final WeatherService weatherService;
-  late Map<String, dynamic> weatherData = {};
+  late final WeatherServiceDeneme weatherService;
+  late WeatherModel? _weatherModel = WeatherModel();
   @override
   void initState() {
     super.initState();
     _apiKey = "6115faddcf9ab2b8482f888359404e88";
-    weatherService =  WeatherService(apiKey: _apiKey);
+    weatherService =  WeatherServiceDeneme(apiKey: _apiKey);
     init();
   }
   Future<void> init() async {
@@ -95,15 +79,13 @@ class _MainState extends State<Main> {
   }
 
   Future<void> _fetchWeatherData() async {
-    Map<String, dynamic> fetchedData;
     try {
-      fetchedData = await weatherService.getWeatherByCity();
+      _weatherModel = await weatherService.getWeatherByCity();
+      print(_weatherModel?.cityName);
     } catch (e) {
-      fetchedData = {'error': 'Failed to fetch weather data'};
+      print("Error :$e");
     }
-    setState(() {
-      weatherData = fetchedData;
-    });
+    setState(() {});
   }
 
   @override
@@ -119,7 +101,7 @@ class _MainState extends State<Main> {
                     color: Colors.green,
                   )
                 : Center(
-                    child: Text("$weatherData"),
+                    child: Text(_weatherModel?.cityName ?? "veri gelmedi!"),
                   )
           ],
         ),
@@ -127,3 +109,6 @@ class _MainState extends State<Main> {
     );
   }
 }
+
+//todo: uygun servis düzeltildi, model uygun halledildi
+//todo: şimdi burdaki view_model kodlarının view ekranı ile birleştiricem!
