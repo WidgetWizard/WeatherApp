@@ -4,12 +4,18 @@ import 'package:weatherapp/product/extension/context/general.dart';
 import 'package:weatherapp/product/extension/context/size.dart';
 
 class ValueContainer extends StatelessWidget {
-  const ValueContainer({Key? key, required this.valueName, required this.percent, this.isPercentage}) : super(key: key);
+  const ValueContainer({Key? key, required this.valueName, this.percent, this.isPercentage, this.isRain}) : super(key: key);
   final String valueName;
-  final double percent;
+  final double? percent;
   final bool? isPercentage;
+  final bool? isRain;
   @override
   Widget build(BuildContext context) {
+    const shadow = Shadow(
+      offset: Offset(1.0, 1.0),
+      blurRadius: 3.0,
+      color: Colors.black,
+    );
     return SizedBox(
       height: context.sized.dynamicHeigth(0.16),
       width: context.sized.dynamicWidth(0.25),
@@ -17,15 +23,20 @@ class ValueContainer extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(valueName,style: context.general.textTheme.titleLarge?.copyWith(color: Colors.white),),
+          Text(valueName,style: context.general.textTheme.titleLarge?.copyWith(color: Colors.white,shadows: <Shadow>[shadow,],),),
           Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
-            Text("$percent",style: context.general.textTheme.titleLarge?.copyWith(color: Colors.white),),
-            Text((isPercentage ?? false) ? 'km/h' : "%",style: context.general.textTheme.titleLarge?.copyWith(color: Colors.white),),
-          ],),
-          LinearPercentIndicator(
+            Text("${percent ?? "unknown"}",style: context.general.textTheme.titleLarge?.copyWith(color: Colors.white, shadows: <Shadow>[shadow,],),),
+            Text((isPercentage ?? false) ? 'km/h' : (isRain ?? false) ? "mm" : "%",
+                style: context.general.textTheme.titleLarge?.copyWith(
+                  color: Colors.white,
+                  shadows: <Shadow>[shadow,],
+                ),
+              ),
+            ],),
+          LinearPercentIndicator( //todo:bu da cok gözükmüyor buna da ekle birşeyler! shadorw falan
             padding: EdgeInsets.zero,
             progressColor: Colors.red,
-            percent: percent / 100,
+            percent: (percent ?? 0) / 100,
             backgroundColor: Colors.white24,
           ),
         ],

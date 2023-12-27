@@ -1,18 +1,32 @@
+import '../../model/weather_model.dart';
 
-import 'package:weatherapp/view/weather_page_view.dart';
+enum WeatherCondition {
+  wind,
+  clear,
+  thunderStorm,
+  snow,
+  rain,
+  clouds,
+  haze,
+}
 
-extension WeatherConditionExtension on WeatherCondition{
-  String getWeatherCondition(){
-    switch(this){
-      case WeatherCondition.windy:
-      case WeatherCondition.sunny:
-      case WeatherCondition.stormy:
-      case WeatherCondition.snowy:
-      case WeatherCondition.rainy:
-      case WeatherCondition.haze:
-        return "$name.gif";
-      case WeatherCondition.partsCloudy:
-        return "parts_cloudy.gif";
+extension WeatherConditionExtension on WeatherCondition {
+  static WeatherCondition? getConditionFromName(String name) {
+    for (var condition in WeatherCondition.values) {
+      if (condition.name.toLowerCase() == name.toLowerCase()) {
+        return condition;
+      }
     }
+    return null;
+  }
+
+  String? getWeatherConditionGif(WeatherModel? weatherModel) {
+    if (weatherModel?.mainCondition != null) {
+      var condition = getConditionFromName(weatherModel!.mainCondition ?? "");
+      if (condition != null) {
+        return "assets/images/${condition.name}.gif";
+      }
+    }
+    return null;
   }
 }

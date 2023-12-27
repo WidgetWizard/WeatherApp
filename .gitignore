@@ -43,3 +43,6 @@ app.*.map.json
 /android/app/release
 
 lib/service/link.dart
+
+# api
+lib/product/api/project_api.dart

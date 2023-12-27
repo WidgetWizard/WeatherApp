@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:weatherapp/model/weather_model.dart';
-import 'package:weatherapp/product/api/weather_api.dart';
 import 'package:weatherapp/product/extension/context/general.dart';
 import 'package:weatherapp/product/extension/context/icon_size.dart';
 import 'package:weatherapp/product/extension/context/padding.dart';
 import 'package:weatherapp/product/extension/context/size.dart';
-import 'package:weatherapp/service/weather_service.dart';
+import 'package:weatherapp/product/extension/weather_condition.dart';
+import 'package:weatherapp/view_model/weather_page_view_model.dart';
 
+import '../product/api/project_api.dart';
 import '../product/widgets/value_container.dart';
 
 class WeatherPageView extends StatefulWidget {
@@ -16,84 +18,98 @@ class WeatherPageView extends StatefulWidget {
   State<WeatherPageView> createState() => _WeatherPageViewState();
 }
 
-class _WeatherPageViewState extends State<WeatherPageView> with _PageUtility{
-  final String _weatherApiKey = WeatherApi().getWeatherApi;
-  final String _baseUrl = "https://api.openweathermap.org/data/2.5";
-  bool isLoading = false;
-  late final IWeatherService _weatherService;
-  WeatherModel? _weatherModel;
-  @override
-  void initState() {
-    _weatherService = WeatherService(apiKey: _weatherApiKey, baseUrl: _baseUrl);
-    _weatherModel = WeatherModel();
-    super.initState();
-  }
-
-  Future<void> init() async {
-    setState(() => isLoading = true);
-    await _weatherService.getLocationWithPermission();
-    await fetchWeatherData();
-    setState(() => isLoading = false);
-  }
-
-  Future<void> fetchWeatherData() async {
-    setState(() async => _weatherModel = await _weatherService.getWeatherData());
-  }
-
+class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          leading: IconButton(iconSize: context.iconSize.normal,color: Colors.white,
-              onPressed: () {}, icon: const Icon(Icons.search_outlined)),
-          actions: [
-            IconButton(iconSize: context.iconSize.large,color: Colors.white,
-                onPressed: () {}, icon: const Icon(Icons.drag_handle_outlined))
-          ],
-        ),
-        body: isLoading
-            ? const CircularProgressIndicator(color: Colors.black,)
-            : Padding(
-                padding: context.padding.mediumSymmetricHorizontal,
-                child: SafeArea(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _cityText(context),
-                      _dateText(context),
-                      _degreeText(context),
-                      _assetsAndWeatherInfoText(context),
-                      _divider(context),
-                      _bottomComponent(context)
-                    ],
-                  ),
-                ),
-              ));
-  }
-}
-
-mixin _PageUtility{
-  Padding _bottomComponent(BuildContext context) {
-    return Padding(
-      padding: context.padding.topOnlyMedium,
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    var stringUnknown = "Unknown";
+    return SafeArea(
+      child: Stack(
         children: [
-          ValueContainer(valueName: "Wind",percent: 58),
-          ValueContainer(valueName: "Rain",percent: 70,isPercentage: false),
-          ValueContainer(valueName: "Humidity",percent: 92,isPercentage: false),
+          _weatherPageBackgroundImage(context),
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: _weatherPageAppBar(context),
+            body: isLoading
+                ? _loadingBarPlace()
+                : Padding(
+                    padding: context.padding.mediumSymmetricHorizontal,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _cityText(context,cityName: weatherModel?.cityName ?? stringUnknown),
+                        _dateText(context),
+                        _degreeText(context,temp: weatherModel?.temp?.toInt()),
+                        _assetsAndWeatherInfoText(context,mainCondition: weatherModel?.mainCondition ?? stringUnknown,weatherModel: weatherModel),
+                        _divider(context),
+                        _bottomComponent(context,weatherModel: weatherModel)
+                      ],
+                    ),
+                  ),
+          ),
         ],
       ),
     );
   }
+
+  AppBar _weatherPageAppBar(BuildContext context) {
+    return AppBar(
+            backgroundColor: Colors.transparent,
+            leading: IconButton(
+                iconSize: context.iconSize.normal,
+                color: Colors.white,
+                onPressed: () {},
+                icon: Icon(Icons.search_outlined,shadows: <Shadow>[shadow],)),
+            actions: [
+              IconButton(
+                  iconSize: context.iconSize.large,
+                  color: Colors.white,
+                  onPressed: () {},
+                  icon: Icon(Icons.drag_handle_outlined,shadows: <Shadow>[shadow]))
+            ],
+          );
+  }
+  Image _weatherPageBackgroundImage(BuildContext context) {
+    return Image.network(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          randomImageUrl,
+          headers: ProjectApi().getHeaders,
+          fit: BoxFit.cover,
+        );
+  }
+}
+
+mixin _PageUtility on State<WeatherPageView>{
+  final shadow = const Shadow(
+    offset: Offset(1.0, 1.0),
+    blurRadius: 3.0,
+    color: Colors.black,
+  );
+
+  Padding _bottomComponent(BuildContext context,{WeatherModel? weatherModel}) {
+    return Padding(
+      padding: context.padding.topOnlyMedium,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          ValueContainer(valueName: "Wind", percent: weatherModel?.wind,isPercentage: true),
+          ValueContainer(valueName: "Rain", percent: _setPercent(weatherModel),isRain: true),
+          ValueContainer(valueName: "Humidity", percent: weatherModel?.humidity?.toDouble(),),
+        ],
+      ),
+    );
+  }
+
+  double _setPercent(WeatherModel? weatherModel) => (weatherModel?.rain != null ? (weatherModel!.rain! * 100) : (0.00));
+
   Padding _divider(BuildContext context) {
     return Padding(
       padding: context.padding.topOnlyMedium,
       child: const Divider(color: Colors.white),
     );
   }
-  Padding _assetsAndWeatherInfoText(BuildContext context) {
+
+  Padding _assetsAndWeatherInfoText(BuildContext context,{required String mainCondition,WeatherModel? weatherModel}) {
     return Padding(
       padding: context.padding.dynamicOnly(top: 0.02),
       child: Row(
@@ -101,48 +117,68 @@ mixin _PageUtility{
         children: [
           Padding(
             padding: context.padding.rightOnlyNormal,
-            child: Image.asset("assets/images/rainy.gif"),
+            child: Image.asset(WeatherCondition.rain.getWeatherConditionGif(weatherModel) ?? ""),
           ),
-          Text('Raining',style: context.general.textTheme.titleLarge?.copyWith(
-            color: Colors.white,
-            fontSize: context.sized.dynamicHeigth(0.037),
-          ),),
+          Text(
+            mainCondition,
+            style: context.general.textTheme.titleLarge?.copyWith(
+              color: Colors.white,
+              fontSize: context.sized.dynamicHeigth(0.037),
+              shadows: <Shadow>[shadow,],
+            ),
+          ),
         ],
       ),
     );
   }
-  Padding _degreeText(BuildContext context) {
+
+  Padding _degreeText(BuildContext context,{required int? temp}) {
     return Padding(
       padding: context.padding.dynamicOnly(top: 0.15),
-      child: Text('8°',style: context.general.textTheme.displayLarge?.copyWith(
-        color: Colors.white,
-        fontSize: context.sized.dynamicHeigth(0.16),
-      ),),
+      child: Text(
+        '${temp ?? "unknown"}°',
+        style: context.general.textTheme.displayLarge?.copyWith(
+          color: Colors.white,
+          fontSize: temp == null ? context.sized.dynamicHeigth(0.05) : context.sized.dynamicHeigth(0.12),
+          shadows: <Shadow>[shadow,],
+        ),
+      ),
     );
   }
+
   Text _dateText(BuildContext context) {
-    return Text('Saturday 25 Jul 2020',style: context.general.textTheme.titleMedium?.copyWith(
-      color: Colors.white,
-      fontWeight: FontWeight.w400,
-    ),);
+    final now = DateTime.now();
+    String formattedDate = DateFormat('EEEE d MMMM y').format(now);
+    return Text(
+      formattedDate,
+      style: context.general.textTheme.titleMedium?.copyWith(
+        color: Colors.white,
+        fontWeight: FontWeight.w400,
+        shadows: <Shadow>[shadow,],
+      ),
+    );
   }
-  Padding _cityText(BuildContext context) {
+
+  Padding _cityText(BuildContext context,{required String cityName}) {
     return Padding(
       padding: context.padding.dynamicOnly(top: 0.1),
-      child: Text('Şehir ismi',style: context.general.textTheme.displaySmall?.copyWith(
-        fontWeight: FontWeight.w500,
+      child: Text(
+        cityName,
+        style: context.general.textTheme.displaySmall?.copyWith(
+          fontWeight: FontWeight.w500,
+          color: Colors.white,
+          shadows: <Shadow>[shadow,],
+        ),
+      ),
+    );
+  }
+
+  Center _loadingBarPlace() {
+    return const Center(
+      child: CircularProgressIndicator(
         color: Colors.white,
-      ),),
+      ),
     );
   }
 }
 
-enum WeatherCondition{
-  windy,
-  sunny,
-  stormy,
-  snowy,
-  rainy,
-  partsCloudy,
-  haze,
-}

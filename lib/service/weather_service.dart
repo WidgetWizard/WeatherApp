@@ -21,7 +21,7 @@ class WeatherService extends IWeatherService{
   Future<WeatherModel?> getWeatherData() async {
     if (_longitude != null || _longitude != null) {
       final response = await http.get(Uri.parse(
-          "$_baseUrl/weather?lat=$_latitude&lon=$_longitude&appid=$_apiKey"));
+          "$_baseUrl/weather?lat=$_latitude&lon=$_longitude&units=metric&lang=tr&appid=$_apiKey"));
       if (response.statusCode == 200) {
         return WeatherModel.fromJson(jsonDecode(response.body));
       }

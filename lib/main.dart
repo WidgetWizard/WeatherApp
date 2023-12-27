@@ -14,10 +14,14 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(
-        // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       home: const WeatherPageView(),
     );
   }
 }
+
+//todo:yüklenirkenki ekrandaki theme ayarlanıcak!
+//todo:lottie ile loading barı ayarlıcaz!!
+//todo:birincisi date çekmem gerek!
+//todo:ikincisi havanın durumuna göre weatherIcons gif değişicek!
