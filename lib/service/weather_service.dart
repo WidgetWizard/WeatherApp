@@ -4,15 +4,17 @@ import 'dart:convert';
 
 import '../model/weather_model.dart';
 
-abstract class IWeatherService{
+abstract class IWeatherService {
   final String _apiKey;
   final String _baseUrl;
-  IWeatherService({required String apiKey,required String baseUrl}) : _apiKey = apiKey, _baseUrl = baseUrl;
+  IWeatherService({required String apiKey, required String baseUrl})
+      : _apiKey = apiKey,
+        _baseUrl = baseUrl;
   Future<WeatherModel?> getWeatherData();
   Future<void> getLocationWithPermission();
-  }
+}
 
-class WeatherService extends IWeatherService{
+class WeatherService extends IWeatherService {
   double? _latitude;
   double? _longitude;
   WeatherService({required super.apiKey, required super.baseUrl});
@@ -35,10 +37,31 @@ class WeatherService extends IWeatherService{
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
     }
-    if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+    if (permission == LocationPermission.whileInUse ||
+        permission == LocationPermission.always) {
       Position position = await Geolocator.getCurrentPosition();
       _latitude = position.latitude;
       _longitude = position.longitude;
     }
+  }
+}
+
+class CityWeatherService {
+  final String _apiKey;
+  final String _baseUrl;
+
+  CityWeatherService({required String apiKey, required String baseUrl})
+      : _apiKey = apiKey,
+        _baseUrl = baseUrl;
+
+  Future<WeatherModel?> getCityWeatherData(String? cityName) async {
+    if (cityName != null) {
+      final response = await http.get(Uri.parse(
+          "$_baseUrl/weather?q=$cityName&units=metric&lang=tr&appid=$_apiKey"));
+      if (response.statusCode == 200) {
+        return WeatherModel.fromJson(jsonDecode(response.body));
+      }
+    }
+    return null;
   }
 }
