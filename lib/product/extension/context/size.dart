@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:weatherapp/product/extension/context/general.dart';
+import 'package:weather_app/product/extension/context/general.dart';
 
 class _ContextSizeExtension{
   _ContextSizeExtension(BuildContext context) : _context = context;

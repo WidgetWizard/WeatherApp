@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:weatherapp/view/weather_page_view.dart';
+import 'package:weather_app/view/weather_page_view.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const Main());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class Main extends StatelessWidget {
+  const Main({super.key});
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,4 @@ class MyApp extends StatelessWidget {
   }
 }
 
-//todo:yüklenirkenki ekrandaki theme ayarlanıcak!
-//todo:lottie ile loading barı ayarlıcaz!!
-//todo:birincisi date çekmem gerek!
-//todo:ikincisi havanın durumuna göre weatherIcons gif değişicek!
+//todo: knk bu kodlarla güncel bir projede bir apk çıkartmayı dene!

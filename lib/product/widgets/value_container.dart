@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:weatherapp/product/extension/context/general.dart';
-import 'package:weatherapp/product/extension/context/size.dart';
+import 'package:weather_app/product/extension/context/general.dart';
+import 'package:weather_app/product/extension/context/size.dart';
 
 class ValueContainer extends StatelessWidget {
   const ValueContainer({Key? key, required this.valueName, this.percent, this.isPercentage, this.isRain}) : super(key: key);
