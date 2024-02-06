@@ -139,11 +139,7 @@ class MyDelegate extends SearchDelegate {
       baseUrl: "https://api.openweathermap.org/data/2.5");
   //? şehir isimlerini db mi yapalım uygulama içinde yoksa api mi kullanalım?
   List<String> Searchresult = [
-    "londra",
-    "paris",
     "ankara",
-    "istanbul",
-    "izmir",
     "adana",
     "adıyaman",
     "afyon",
@@ -228,14 +224,14 @@ class MyDelegate extends SearchDelegate {
   List<Widget>? buildActions(BuildContext context) => [
         IconButton(
           onPressed: () => query = "",
-          icon: Icon(Icons.clear),
+          icon: const Icon(Icons.clear),
         )
       ];
 
   @override
   Widget? buildLeading(BuildContext context) => IconButton(
         onPressed: () => close(context, null),
-        icon: Icon(Icons.arrow_back_ios_outlined),
+        icon: const Icon(Icons.arrow_back_ios_outlined),
       );
 
   @override
@@ -245,26 +241,53 @@ class MyDelegate extends SearchDelegate {
       future: _cityWeatherService.getCityWeatherData(query),
       builder: (BuildContext context, AsyncSnapshot<WeatherModel?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Hata: ${snapshot.error}'));
         } else {
           // Veri çekme işlemi başarılı olduysa, veriyi göster
           WeatherModel? weatherData = snapshot.data;
-          return Scaffold(
-            body: Center(
-              child: Column(
-                children: [
-                  Text(weatherData?.cityName ?? "Unknown"),
-                  Text("sıcaklık : ${weatherData?.temp}"),
-                  Text("durum : ${weatherData?.mainCondition}"),
-                  Text("rüzgar : ${weatherData?.wind}"),
-                  Text("nem : ${weatherData?.humidity}"),
-                  Text("yağmur oranı : ${weatherData?.rain}"),
-                ],
-              ),
-            ),
-          );
+          return weatherData == null
+              ? const Center(child: Text(""))
+              : Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ListTile(
+                          title: Center(
+                              child: Text(weatherData.cityName ?? "Unknown")),
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.thermostat_outlined),
+                          title: const Text("Sıcaklık"),
+                          trailing: Text("${weatherData.temp}"),
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.cloud),
+                          title: const Text("Durum"),
+                          trailing: Text("${weatherData.mainCondition}"),
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.air),
+                          title: const Text("Rüzgar"),
+                          trailing: Text("${weatherData.wind}"),
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.water_damage),
+                          title: const Text("Nem"),
+                          trailing: Text("${weatherData.humidity}"),
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.umbrella),
+                          title: const Text("Yağmur Oranı"),
+                          trailing: Text("${weatherData.rain}"),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
         }
       },
     );
