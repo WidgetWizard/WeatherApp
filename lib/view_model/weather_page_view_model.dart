@@ -32,4 +32,51 @@ abstract class WeatherPageViewModel extends State<WeatherPageView> {
     });
     return weather;
   }
+
+  Future<WeatherFiveDaysWithThreeHourModel?>
+      initFiveDaysThreeHoursWeatherData() async {
+    WeatherFiveDaysWithThreeHourModel model;
+    _weatherThreeHoursService = WeatherServiceForFiveDaysWithThreeHours(
+        apiKey: _weatherApiKey, baseUrl: _baseUrl);
+    await _weatherThreeHoursService.getLocationWithPermission();
+    model = await _weatherThreeHoursService.getWeatherData();
+    print("model :${model.cityName}");
+    setState(() {
+      weatherThreeHoursModel = model;
+    });
+    return model;
+  }
+
+  void _startTimer() {
+    int k = 1;
+    _timer = Timer.periodic(const Duration(seconds: 20), (timer) {
+      if (weatherThreeHoursModel != null) {
+        if (k < (weatherThreeHoursModel?.mainCondition?.length ?? 0)) {
+          String? mainCondition = weatherThreeHoursModel?.mainCondition?[k];
+          int? temperature = weatherThreeHoursModel?.temp?[k].toInt();
+          _showNotification(mainCondition, temperature);
+          k += 2;
+        } else {
+          //todo: büyük ihtimalle tekrardan istek atıp yeni verileri çekmem gerekicek
+          initFiveDaysThreeHoursWeatherData();
+          print("yeni veriler geldi!");
+          k = 1;
+        }
+      }
+    });
+  }
+
+  Future<void> _showNotification(
+      String? mainCondition, int? temperature) async {
+    await notificationService.showNotification(
+      title: weatherThreeHoursModel?.cityName ?? "",
+      body: "Six hours later :$mainCondition $temperature°",
+    );
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 }
