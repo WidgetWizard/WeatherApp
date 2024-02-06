@@ -64,15 +64,28 @@ abstract class WeatherPageViewModel extends State<WeatherPageView>{
   }
 
   void _startTimer() {
+    int k = 1;
     _timer = Timer.periodic(const Duration(seconds: 20), (timer) {
-      _showNotification();
+      if (weatherThreeHoursModel != null) {
+        if (k < (weatherThreeHoursModel?.mainCondition?.length ?? 0)) {
+          String? mainCondition = weatherThreeHoursModel?.mainCondition?[k];
+          int? temperature = weatherThreeHoursModel?.temp?[k].toInt();
+          _showNotification(mainCondition,temperature);
+          k += 2;
+        } else {
+          //todo: büyük ihtimalle tekrardan istek atıp yeni verileri çekmem gerekicek
+          initFiveDaysThreeHoursWeatherData();
+          print("yeni veriler geldi!");
+          k = 1;
+        }
+      }
     });
   }
 
-  Future<void> _showNotification() async {
+  Future<void> _showNotification(String? mainCondition,int? temperature) async {
     await notificationService.showNotification(
-      title: "${weatherThreeHoursModel?.cityName}",
-      body: "${weatherModel?.mainCondition} ${weatherModel?.temp?.toInt()}°",
+      title: weatherThreeHoursModel?.cityName ?? "",
+      body: "Six hours later :$mainCondition $temperature°",
     );
   }
 
@@ -82,7 +95,12 @@ abstract class WeatherPageViewModel extends State<WeatherPageView>{
     super.dispose();
   }
 }
-
+/*Future<void> _showNotification() async {
+    await notificationService.showNotification(
+      title: "${weatherThreeHoursModel?.cityName}",
+      body: "${weatherModel?.mainCondition} ${weatherModel?.temp?.toInt()}°",
+    );
+  }*/
 /*
 void startPeriodicNotifications() {
   int k = 1;
