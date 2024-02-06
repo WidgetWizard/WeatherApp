@@ -95,28 +95,4 @@ abstract class WeatherPageViewModel extends State<WeatherPageView>{
     super.dispose();
   }
 }
-/*Future<void> _showNotification() async {
-    await notificationService.showNotification(
-      title: "${weatherThreeHoursModel?.cityName}",
-      body: "${weatherModel?.mainCondition} ${weatherModel?.temp?.toInt()}°",
-    );
-  }*/
-/*
-void startPeriodicNotifications() {
-  int k = 1;
-  _timer = Timer.periodic(const Duration(seconds: 20), (timer) {
-    if (weatherThreeHoursModel != null) {
-      if (k < (weatherThreeHoursModel?.mainCondition?.length ?? 0)) {
-        String? mainCondition = weatherThreeHoursModel?.mainCondition?[k];
-        double? temperature = weatherThreeHoursModel?.temp?[k].toInt().toDouble();
-        notificationService.showNotification(
-          title: "${weatherThreeHoursModel?.cityName}",
-          body: "$mainCondition ${temperature?.toInt()}°",
-        );
-        k += 2;
-      } else {
-        k = 1;
-      }
-    }
-  });
-}*/
+
