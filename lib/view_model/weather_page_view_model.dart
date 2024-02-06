@@ -21,6 +21,7 @@ abstract class WeatherPageViewModel extends State<WeatherPageView> {
     });
   }
 
+// TODO: Eğer konum izni vermezse şehir seçme sayfasına yönlendirme yapılacak.
   Future<WeatherModel?> initWeatherModel() async {
     setState(() => isLoading = true);
     await _weatherService.getLocationWithPermission();
