@@ -65,7 +65,7 @@ abstract class WeatherPageViewModel extends State<WeatherPageView>{
 
   void _startTimer() {
     int k = 1;
-    _timer = Timer.periodic(const Duration(seconds: 20), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 20), (timer) { //todo: hour 6 saat yap
       if (weatherThreeHoursModel != null) {
         if (k < (weatherThreeHoursModel?.mainCondition?.length ?? 0)) {
           String? mainCondition = weatherThreeHoursModel?.mainCondition?[k];
@@ -73,7 +73,6 @@ abstract class WeatherPageViewModel extends State<WeatherPageView>{
           _showNotification(mainCondition,temperature);
           k += 2;
         } else {
-          //todo: büyük ihtimalle tekrardan istek atıp yeni verileri çekmem gerekicek
           initFiveDaysThreeHoursWeatherData();
           print("yeni veriler geldi!");
           k = 1;
