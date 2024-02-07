@@ -1,7 +1,7 @@
 
 
 import 'package:flutter/cupertino.dart';
-import 'package:weather_app/product/extension/context/size.dart';
+import 'package:weatherapp/product/extension/context/size.dart';
 
 class _ContextPaddingExtension{
   _ContextPaddingExtension(BuildContext context) : _context = context;

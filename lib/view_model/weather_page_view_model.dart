@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:weather_app/model/weather_five_days_with_three_hours_model.dart';
-import 'package:weather_app/service/background_image_service.dart';
+import '../model/weather_five_days_with_three_hours_model.dart';
 import '../model/weather_model.dart';
 import '../product/api/project_api.dart';
+import '../service/background_image_service.dart';
 import '../service/notification_service.dart';
 import '../service/weather_service.dart';
 import '../view/weather_page_view.dart';

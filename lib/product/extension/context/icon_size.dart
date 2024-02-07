@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/product/extension/context/size.dart';
+import 'package:weatherapp/product/extension/context/size.dart';
 
 
 class _AppIconSize{

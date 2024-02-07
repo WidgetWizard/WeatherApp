@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:weather_app/product/extension/context/general.dart';
-import 'package:weather_app/product/extension/context/size.dart';
+import 'package:weatherapp/product/extension/context/general.dart';
+import 'package:weatherapp/product/extension/context/size.dart';
 
 class ValueContainer extends StatelessWidget {
   const ValueContainer({Key? key, required this.valueName, this.percent, this.isPercentage, this.isRain}) : super(key: key);
@@ -33,7 +33,7 @@ class ValueContainer extends StatelessWidget {
                 ),
               ),
             ],),
-          LinearPercentIndicator( //todo:bu da cok gözükmüyor buna da ekle birşeyler! shadorw falan
+          LinearPercentIndicator(
             padding: EdgeInsets.zero,
             progressColor: Colors.red,
             percent: (percent ?? 0) / 100,

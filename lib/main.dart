@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/view/weather_page_view.dart';
+import 'package:weatherapp/view/weather_page_view.dart';
+
 
 void main() {
   runApp(const Main());
@@ -21,5 +22,3 @@ class Main extends StatelessWidget {
     );
   }
 }
-
-//todo: knk bu kodlarla güncel bir projede bir apk çıkartmayı dene!

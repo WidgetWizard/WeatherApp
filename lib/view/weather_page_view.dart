@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:weather_app/product/extension/context/general.dart';
-import 'package:weather_app/product/extension/context/icon_size.dart';
-import 'package:weather_app/product/extension/context/padding.dart';
-import 'package:weather_app/product/extension/context/size.dart';
-import 'package:weather_app/model/weather_model.dart';
+import 'package:weatherapp/product/extension/context/general.dart';
+import 'package:weatherapp/product/extension/context/icon_size.dart';
+import 'package:weatherapp/product/extension/context/padding.dart';
+import 'package:weatherapp/product/extension/context/size.dart';
 
-import 'package:weather_app/product/extension/weather_condition.dart';
-import 'package:weather_app/view_model/weather_page_view_model.dart';
+import '../model/weather_model.dart';
+import '../product/extension/weather_condition.dart';
+import '../view_model/weather_page_view_model.dart';
 
 import '../product/api/project_api.dart';
 import '../product/widgets/value_container.dart';
