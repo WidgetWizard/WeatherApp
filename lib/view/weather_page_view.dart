@@ -24,41 +24,32 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
   Widget build(BuildContext context) {
     var stringUnknown = "Unknown";
     return SafeArea(
-      child: FutureBuilder(
-        future: initBackgroundImageAndWeatherFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Stack(
-              children: [
-                _weatherPageBackgroundImage(context),
-                Scaffold(
-                  backgroundColor: Colors.transparent,
-                  appBar: _weatherPageAppBar(context),
-                  body: Padding(
-                    padding: context.padding.mediumSymmetricHorizontal,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _cityText(context,
-                            cityName: weatherModel?.cityName ?? stringUnknown),
-                        _dateText(context),
-                        _degreeText(context, temp: weatherModel?.temp?.toInt()),
-                        _assetsAndWeatherInfoText(context,
-                            mainCondition:
-                                weatherModel?.mainCondition ?? stringUnknown,
-                            weatherModel: weatherModel),
-                        _divider(context),
-                        _bottomComponent(context, weatherModel: weatherModel)
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            );
-          } else {
-            return _loadingBarPlace();
-          }
-        },
+      child: isLoading ? _loadingBarPlace() : Stack(
+        children: [
+          _weatherPageBackgroundImage(context),
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: _weatherPageAppBar(context),
+            body: Padding(
+              padding: context.padding.mediumSymmetricHorizontal,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _cityText(context,
+                      cityName: weatherModel?.cityName ?? stringUnknown),
+                  _dateText(context),
+                  _degreeText(context, temp: weatherModel?.temp?.toInt()),
+                  _assetsAndWeatherInfoText(context,
+                      mainCondition:
+                      weatherModel?.mainCondition ?? stringUnknown,
+                      weatherModel: weatherModel),
+                  _divider(context),
+                  _bottomComponent(context, weatherModel: weatherModel)
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

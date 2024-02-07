@@ -17,21 +17,28 @@ abstract class WeatherPageViewModel extends State<WeatherPageView>{
   late final IWeatherService _weatherService;
   WeatherModel? weatherModel;
   late final NotificationService notificationService;
-  late Future<void> initBackgroundImageAndWeatherFuture;
   WeatherFiveDaysWithThreeHourModel? weatherThreeHoursModel;
   late final IWeatherService _weatherThreeHoursService;
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    initBackgroundImageAndWeatherFuture = _initBackgroundImageAndWeather();
+    _initBackgroundImageAndWeather();
     _startTimer();
     print("weatherThreeHoursModel :${weatherThreeHoursModel?.cityName}");
   }
 
   Future<void> _initBackgroundImageAndWeather() async {
+    setState(() {
+      isLoading = true;
+    });
     await initNotificationAndWeather().then((weather) {
       print(weather?.cityName);
+      setState(() {
+        weatherModel = weather;
+        isLoading = false;
+      });
     });
   }
 
@@ -44,9 +51,6 @@ abstract class WeatherPageViewModel extends State<WeatherPageView>{
     weather = await _weatherService.getWeatherData();
     await initFiveDaysThreeHoursWeatherData().then((weather) {
       print(weather?.temp);
-    });
-    setState(() async {
-      weatherModel = weather;
     });
     return weather;
   }
@@ -94,4 +98,5 @@ abstract class WeatherPageViewModel extends State<WeatherPageView>{
     super.dispose();
   }
 }
+
 

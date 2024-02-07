@@ -22,3 +22,6 @@ class Main extends StatelessWidget {
     );
   }
 }
+
+//todo: knk uygulama yuklenirken yeniden bir uyumsuzluk var burda.
+//veriler sonradan geliyor yine! ama ekran erken yükleniyor
