@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'weather_model.g.dart';
 
 @JsonSerializable()
-class WeatherModel {
+class WeatherModel{
   late final String? cityName;
   final double? temp;
   final String? mainCondition;

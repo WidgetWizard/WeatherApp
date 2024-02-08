@@ -1,15 +1,19 @@
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:weatherapp/model/weather_model.dart';
 import 'package:weatherapp/product/extension/context/general.dart';
 import 'package:weatherapp/product/extension/context/icon_size.dart';
 import 'package:weatherapp/product/extension/context/padding.dart';
 import 'package:weatherapp/product/extension/context/size.dart';
+
+
+import '../model/weather_model.dart';
+
 import 'package:weatherapp/product/extension/weather_condition.dart';
 import 'package:weatherapp/service/weather_service.dart';
 import 'package:weatherapp/view_model/weather_page_view_model.dart';
 import 'package:lottie/lottie.dart';
+
 
 import '../product/api/project_api.dart';
 import '../product/widgets/value_container.dart';
@@ -36,6 +40,7 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
   @override
   Widget build(BuildContext context) {
     var stringUnknown = "Unknown";
+
     return CustomMaterialIndicator(
       onRefresh: () => refresh, //todo:burası yenileme çağrısı olucak!
       indicatorBuilder: (context, controller) {
@@ -95,6 +100,7 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
             ),
           ],
         ),
+
       ),
     );
   }
@@ -130,6 +136,7 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
       headers: ProjectApi().getHeaders,
       fit: BoxFit.cover,
     );
+
   }
 }
 
@@ -310,6 +317,7 @@ class MyDelegate extends SearchDelegate {
         );
       },
     );
+
   }
 }
 

@@ -33,7 +33,7 @@ class ValueContainer extends StatelessWidget {
                 ),
               ),
             ],),
-          LinearPercentIndicator( //todo:bu da cok gözükmüyor buna da ekle birşeyler! shadorw falan
+          LinearPercentIndicator(
             padding: EdgeInsets.zero,
             progressColor: Colors.red,
             percent: (percent ?? 0) / 100,

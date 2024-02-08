@@ -18,11 +18,11 @@ WeatherModel _$WeatherModelFromJson(Map<String, dynamic> json) => WeatherModel(
 
 Map<String, dynamic> _$WeatherModelToJson(WeatherModel instance) =>
     <String, dynamic>{
-      'cityName': instance.cityName,
-      'temp': instance.temp,
-      'mainCondition': instance.mainCondition,
-      'descCondition': instance.descCondition,
-      'wind': instance.wind,
-      'humidity': instance.humidity,
-      'rain': instance.rain,
+          'cityName': instance.cityName,
+          'temp': instance.temp,
+          'mainCondition': instance.mainCondition,
+          'descCondition': instance.descCondition,
+          'wind': instance.wind,
+          'humidity': instance.humidity,
+          'rain': instance.rain,
     };

@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:weatherapp/view/weather_page_view.dart';
 import 'package:weatherapp/product/widgets/no_network.dart';
 
+
 void main() {
-  runApp(const MyApp());
+  runApp(const Main());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class Main extends StatelessWidget {
+  const Main({super.key});
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,5 @@ class MyApp extends StatelessWidget {
   }
 }
 
-//todo:yüklenirkenki ekrandaki theme ayarlanıcak!
-//todo:lottie ile loading barı ayarlıcaz!!
-//todo:birincisi date çekmem gerek!
-//todo:ikincisi havanın durumuna göre weatherIcons gif değişicek!
+//todo: knk uygulama yuklenirken yeniden bir uyumsuzluk var burda.
+//veriler sonradan geliyor yine! ama ekran erken yükleniyor
