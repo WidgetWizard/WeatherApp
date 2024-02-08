@@ -3,6 +3,7 @@ import '../model/weather_model.dart';
 import '../product/api/project_api.dart';
 import '../service/weather_service.dart';
 import '../view/weather_page_view.dart';
+import "../model/"
 
 abstract class WeatherPageViewModel extends State<WeatherPageView> {
   final String _weatherApiKey = ProjectApi().getWeatherApi;
