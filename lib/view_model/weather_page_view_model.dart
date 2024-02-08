@@ -9,11 +9,13 @@ import '../service/notification_service.dart';
 import '../service/weather_service.dart';
 import '../view/weather_page_view.dart';
 
-abstract class WeatherPageViewModel extends State<WeatherPageView>{
+abstract class WeatherPageViewModel extends State<WeatherPageView> {
   final String _weatherApiKey = ProjectApi().getWeatherApi;
   final String _baseUrl = "https://api.openweathermap.org/data/2.5";
+
   final String randomImageUrl = RandomBackgroundImage().url;
   late Timer _timer;
+
   late final IWeatherService _weatherService;
   WeatherModel? weatherModel;
   late final NotificationService notificationService;
@@ -24,6 +26,7 @@ abstract class WeatherPageViewModel extends State<WeatherPageView>{
   @override
   void initState() {
     super.initState();
+
     _initBackgroundImageAndWeather();
     _startTimer();
     print("weatherThreeHoursModel :${weatherThreeHoursModel?.cityName}");
@@ -34,6 +37,7 @@ abstract class WeatherPageViewModel extends State<WeatherPageView>{
       isLoading = true;
     });
     await initNotificationAndWeather().then((weather) {
+
       print(weather?.cityName);
       setState(() {
         weatherModel = weather;
@@ -42,10 +46,12 @@ abstract class WeatherPageViewModel extends State<WeatherPageView>{
     });
   }
 
+
   Future<WeatherModel?> initNotificationAndWeather() async {
     notificationService = NotificationService();
     WeatherModel? weather;
     _weatherService = CurrentWeatherService(apiKey: _weatherApiKey, baseUrl: _baseUrl);
+
     await _weatherService.getLocationWithPermission();
     await notificationService.initializeNotification(null);
     weather = await _weatherService.getWeatherData();
@@ -55,9 +61,11 @@ abstract class WeatherPageViewModel extends State<WeatherPageView>{
     return weather;
   }
 
+
   Future<WeatherFiveDaysWithThreeHourModel?> initFiveDaysThreeHoursWeatherData() async {
     WeatherFiveDaysWithThreeHourModel model;
     _weatherThreeHoursService = WeatherServiceForFiveDaysWithThreeHours(apiKey: _weatherApiKey, baseUrl: _baseUrl);
+
     await _weatherThreeHoursService.getLocationWithPermission();
     model = await _weatherThreeHoursService.getWeatherData();
     print("model :${model.cityName}");
@@ -69,14 +77,18 @@ abstract class WeatherPageViewModel extends State<WeatherPageView>{
 
   void _startTimer() {
     int k = 1;
+
     _timer = Timer.periodic(const Duration(seconds: 20), (timer) { //todo: hour 6 saat yap
+
       if (weatherThreeHoursModel != null) {
         if (k < (weatherThreeHoursModel?.mainCondition?.length ?? 0)) {
           String? mainCondition = weatherThreeHoursModel?.mainCondition?[k];
           int? temperature = weatherThreeHoursModel?.temp?[k].toInt();
+
           _showNotification(mainCondition,temperature);
           k += 2;
         } else {
+
           initFiveDaysThreeHoursWeatherData();
           print("yeni veriler geldi!");
           k = 1;
@@ -85,7 +97,9 @@ abstract class WeatherPageViewModel extends State<WeatherPageView>{
     });
   }
 
+
   Future<void> _showNotification(String? mainCondition,int? temperature) async {
+
     await notificationService.showNotification(
       title: weatherThreeHoursModel?.cityName ?? "",
       body: "Six hours later :$mainCondition $temperature°",
@@ -98,5 +112,4 @@ abstract class WeatherPageViewModel extends State<WeatherPageView>{
     super.dispose();
   }
 }
-
 

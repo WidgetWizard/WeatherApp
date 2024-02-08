@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weatherapp/view/weather_page_view.dart';
+import 'package:weatherapp/product/widgets/no_network.dart';
 
 
 void main() {
@@ -18,6 +19,18 @@ class Main extends StatelessWidget {
       theme: ThemeData.dark(
         useMaterial3: true,
       ),
+      builder: (context, child) {
+        return SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: child ?? const SizedBox(),
+              ),
+              const NoNetworkWidget(),
+            ],
+          ),
+        );
+      },
       home: const WeatherPageView(),
     );
   }

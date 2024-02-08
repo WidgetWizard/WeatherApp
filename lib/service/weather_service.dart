@@ -56,3 +56,23 @@ class WeatherServiceForFiveDaysWithThreeHours extends IWeatherService{
     return null;
   }
 }
+
+class CityWeatherService {
+  final String _apiKey;
+  final String _baseUrl;
+
+  CityWeatherService({required String apiKey, required String baseUrl})
+      : _apiKey = apiKey,
+        _baseUrl = baseUrl;
+
+  Future<WeatherModel?> getCityWeatherData(String? cityName) async {
+    if (cityName != null) {
+      final response = await http.get(Uri.parse(
+          "$_baseUrl/weather?q=$cityName&units=metric&lang=tr&appid=$_apiKey"));
+      if (response.statusCode == 200) {
+        return WeatherModel.fromJson(jsonDecode(response.body));
+      }
+    }
+    return null;
+  }
+}

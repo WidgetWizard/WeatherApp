@@ -18,7 +18,13 @@ dependencies:
   percent_indicator: ^4.2.3
   json_annotation: ^4.8.1
   intl: ^0.19.0
+
   awesome_notifications: ^0.9.2
+
+  connectivity_plus: ^2.3.8
+  custom_refresh_indicator: ^3.0.0
+  lottie: ^3.0.0
+
 
 dev_dependencies:
   flutter_test:
@@ -34,4 +40,5 @@ flutter:
 
   assets:
    - assets/images/
+   - assets/lottie/
 
