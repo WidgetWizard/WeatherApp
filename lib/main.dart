@@ -36,5 +36,5 @@ class Main extends StatelessWidget {
   }
 }
 
-//todo: knk uygulama yuklenirken yeniden bir uyumsuzluk var burda.
-//veriler sonradan geliyor yine! ama ekran erken yükleniyor
+//todo: öyle bir scheduled metodu ayarla ki scheduled ile olsun ama timer kullanma diğer türlü
+//zamansal özellik kullanamıyorsun.

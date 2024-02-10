@@ -34,42 +34,42 @@ abstract class WeatherPageViewModel extends State<WeatherPageView> {
     setState(() {
       isLoading = true;
     });
-    await initNotificationAndWeather().then((weather) {
+    await initCurrentWeatherData().then((weather) {
       print(weather?.cityName);
       setState(() {
         weatherModel = weather;
+      });
+    });
+    await initFiveDaysThreeHoursWeatherData().then((weather) {
+      print(weather?.temp);
+      setState(() {
+        weatherThreeHoursModel = weather;
         isLoading = false;
       });
     });
   }
 
-  void _initStateForLateObjects(){
+  Future<void> _initStateForLateObjects() async {
     notificationService = NotificationService();
     _weatherService = CurrentWeatherService(apiKey: _weatherApiKey, baseUrl: _baseUrl);
     _weatherThreeHoursService = WeatherServiceForFiveDaysWithThreeHours(apiKey: _weatherApiKey, baseUrl: _baseUrl);
+    await notificationService.initializeNotification(null);
   }
 
-  Future<WeatherModel?> initNotificationAndWeather() async {
-    //todo: initFiveDaysThreeHoursWeatherData i initNotificationAndWeather den ayrı calısıp calısmadıgını dene
+  Future<WeatherModel?> initCurrentWeatherData() async {
     WeatherModel? weather;
     await _weatherService.getLocationWithPermission();
-    await notificationService.initializeNotification(null);
     weather = await _weatherService.getWeatherData();
-    await initFiveDaysThreeHoursWeatherData().then((weather) {
-      print(weather?.temp);
-    });
     return weather;
   }
-
-
   Future<WeatherFiveDaysWithThreeHourModel?> initFiveDaysThreeHoursWeatherData() async {
     WeatherFiveDaysWithThreeHourModel model;
     await _weatherThreeHoursService.getLocationWithPermission();
     model = await _weatherThreeHoursService.getWeatherData();
     print("model :${model.cityName}");
-    setState(() {
+/*    setState(() {
       weatherThreeHoursModel = model;
-    });
+    });*/
     return model;
   }
 
@@ -90,7 +90,6 @@ abstract class WeatherPageViewModel extends State<WeatherPageView> {
       }
     });
   }
-
 
   Future<void> _showNotification(String? mainCondition,int? temperature) async {
     await notificationService.showNotification(

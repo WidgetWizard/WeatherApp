@@ -25,7 +25,7 @@ class WeatherPageView extends StatefulWidget {
 
 class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
   Future<void> get refresh async {
-    await initNotificationAndWeather();
+    await initCurrentWeatherData();
     setState(() {});
     if (isLoading) {
       while (isLoading) {
@@ -38,7 +38,7 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
   Widget build(BuildContext context) {
     var stringUnknown = "Unknown";
     return CustomMaterialIndicator(
-      onRefresh: () => refresh, //todo:burası yenileme çağrısı olucak!
+      onRefresh: () => refresh,
       indicatorBuilder: (context, controller) {
         return const Icon(
           Icons.ac_unit,
@@ -63,9 +63,7 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
                   : Stack(
                       children: [
                         _weatherPageBackgroundImage(context),
-                        // todo: background image verilerle aynı anda gösterilecek!
                         Scaffold(
-                          //TODO: kaymayı düzelt => container içine alıp height'i tüm ekran büyüklüğü kadar ver
                           backgroundColor: Colors.transparent,
                           appBar: _weatherPageAppBar(context),
                           body: Padding(
