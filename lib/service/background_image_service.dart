@@ -1,12 +1,8 @@
-import 'package:flutter/material.dart';
 
-class RndmBackGround {
-  String category = 'nature';
-  late final String url;
-  RndmBackGround() {
-    url = 'https://api.api-ninjas.com/v1/randomimage?category=$category';
+class RandomBackgroundImage {
+  late final String _url;
+  RandomBackgroundImage() {
+    _url = 'https://api.api-ninjas.com/v1/randomimage?category=nature';
   }
-  Image getBackgroundImage() {
-    return Image.network(url);
-  }
+  String get url => _url;
 }

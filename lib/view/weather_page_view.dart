@@ -1,11 +1,13 @@
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:weatherapp/model/weather_model.dart';
 import 'package:weatherapp/product/extension/context/general.dart';
 import 'package:weatherapp/product/extension/context/icon_size.dart';
 import 'package:weatherapp/product/extension/context/padding.dart';
 import 'package:weatherapp/product/extension/context/size.dart';
+
+import '../model/weather_model.dart';
+
 import 'package:weatherapp/product/extension/weather_condition.dart';
 import 'package:weatherapp/service/weather_service.dart';
 import 'package:weatherapp/view_model/weather_page_view_model.dart';
@@ -23,9 +25,8 @@ class WeatherPageView extends StatefulWidget {
 
 class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
   Future<void> get refresh async {
-    setState(() {
-      initWeatherModel();
-    });
+    await initNotificationAndWeather();
+    setState(() {});
     if (isLoading) {
       while (isLoading) {
         await Future.delayed(const Duration(seconds: 1));
@@ -61,8 +62,8 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
                   ? _loadingBarPlace()
                   : Stack(
                       children: [
-                        _weatherPageBackgroundImage(
-                            context), // todo: background image verilerle aynı anda gösterilecek!
+                        _weatherPageBackgroundImage(context),
+                        // todo: background image verilerle aynı anda gösterilecek!
                         Scaffold(
                           //TODO: kaymayı düzelt => container içine alıp height'i tüm ekran büyüklüğü kadar ver
                           backgroundColor: Colors.transparent,
@@ -137,6 +138,7 @@ class MyDelegate extends SearchDelegate {
   final CityWeatherService _cityWeatherService = CityWeatherService(
       apiKey: ProjectApi().getWeatherApi,
       baseUrl: "https://api.openweathermap.org/data/2.5");
+
   //? şehir isimlerini db mi yapalım uygulama içinde yoksa api mi kullanalım?
   List<String> Searchresult = [
     "ankara",
@@ -220,6 +222,7 @@ class MyDelegate extends SearchDelegate {
     "yozgat",
     "zonguldak"
   ];
+
   @override
   List<Widget>? buildActions(BuildContext context) => [
         IconButton(
