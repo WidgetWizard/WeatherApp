@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:weatherapp/view/weather_page_view.dart';
 import 'package:weatherapp/product/widgets/no_network.dart';
 
-
 void main() {
   runApp(const Main());
 }
@@ -31,7 +30,7 @@ class Main extends StatelessWidget {
           ),
         );
       },
-      home: const WeatherPageView(),
+      home: WeatherPageView(),
     );
   }
 }

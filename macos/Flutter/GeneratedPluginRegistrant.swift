@@ -6,7 +6,7 @@ import FlutterMacOS
 import Foundation
 
 import awesome_notifications
-import connectivity_plus_macos
+import connectivity_plus
 import geolocator_apple
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {

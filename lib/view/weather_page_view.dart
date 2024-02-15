@@ -5,6 +5,7 @@ import 'package:weatherapp/product/extension/context/general.dart';
 import 'package:weatherapp/product/extension/context/icon_size.dart';
 import 'package:weatherapp/product/extension/context/padding.dart';
 import 'package:weatherapp/product/extension/context/size.dart';
+import 'package:weatherapp/view/%C5%9Fehirler.dart';
 
 import '../model/weather_model.dart';
 
@@ -49,7 +50,7 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
       scrollableBuilder: (context, child, controller) {
         return FadeTransition(
           opacity:
-              Tween(begin: 1.0, end: 0.0).animate(controller.clamp(0.0, 1.0)),
+              Tween(begin: 1.0, end: 0.3).animate(controller.clamp(0.0, 1.0)),
           child: child,
         );
       },
@@ -115,7 +116,9 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
         IconButton(
             iconSize: context.iconSize.large,
             color: Colors.white,
-            onPressed: () {},
+            onPressed: () {
+              //todo: drawer tasarlanıcak
+            },
             icon: Icon(Icons.drag_handle_outlined, shadows: <Shadow>[shadow]))
       ],
     );
@@ -138,89 +141,7 @@ class MyDelegate extends SearchDelegate {
       baseUrl: "https://api.openweathermap.org/data/2.5");
 
   //? şehir isimlerini db mi yapalım uygulama içinde yoksa api mi kullanalım?
-  List<String> Searchresult = [
-    "ankara",
-    "adana",
-    "adıyaman",
-    "afyon",
-    "ağrı",
-    "aksaray",
-    "amasya",
-    "antalya",
-    "ardahan",
-    "artvin",
-    "aydın",
-    "balıkesir",
-    "bartın",
-    "batman",
-    "bayburt",
-    "bilecik",
-    "bingöl",
-    "bitlis",
-    "bolu",
-    "burdur",
-    "bursa",
-    "çanakkale",
-    "çankırı",
-    "çorum",
-    "denizli",
-    "diyarbakır",
-    "düzce",
-    "edirne",
-    "elazığ",
-    "erzincan",
-    "erzurum",
-    "eskişehir",
-    "gaziantep",
-    "giresun",
-    "gümüşhane",
-    "hakkari",
-    "hatay",
-    "ığdır",
-    "ısparta",
-    "mersin",
-    "istanbul",
-    "izmir",
-    "karabük",
-    "karaman",
-    "kars",
-    "kastamonu",
-    "kayseri",
-    "kırıkkale",
-    "kırklareli",
-    "kırşehir",
-    "kilis",
-    "kocaeli",
-    "konya",
-    "kütahya",
-    "malatya",
-    "manisa",
-    "mardin",
-    "muğla",
-    "muş",
-    "nevşehir",
-    "niğde",
-    "ordu",
-    "osmaniye",
-    "rize",
-    "sakarya",
-    "samsun",
-    "siirt",
-    "sinop",
-    "sivas",
-    "şanlıurfa",
-    "şırnak",
-    "tekirdağ",
-    "tokat",
-    "trabzon",
-    "tunceli",
-    "uşak",
-    "van",
-    "yalova",
-    "yozgat",
-    "zonguldak"
-  ];
-
+  List<String> searchResult = Searchresult;
   @override
   List<Widget>? buildActions(BuildContext context) => [
         IconButton(
@@ -283,7 +204,7 @@ class MyDelegate extends SearchDelegate {
                         ListTile(
                           leading: const Icon(Icons.umbrella),
                           title: const Text("Yağmur Oranı"),
-                          trailing: Text("${weatherData.rain}"),
+                          trailing: Text("${weatherData.rain ?? 0.0}"),
                         ),
                       ],
                     ),
