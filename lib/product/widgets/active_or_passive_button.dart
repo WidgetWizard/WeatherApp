@@ -12,26 +12,22 @@ class ActiveOrPassiveButton extends StatefulWidget {
 
 class _ActiveOrPassiveButtonState extends State<ActiveOrPassiveButton> {
   late bool isActive = false;
-  late final SharedManager _sharedManager;
   bool isLoading = false;
 
   @override
   void initState() {
-    _sharedManager = SharedManager();
-    _init();
+    _initialize();
     super.initState();
   }
 
-  Future<void> _init() async {
+  Future<void> _initialize() async {
     changeLoading();
-    await _sharedManager.init().then((value) {
-      if (_sharedManager.preferences != null) {
-        switch (widget.sharedKeys) {
-          case SharedKeys.darkMode:
-            isActive = _sharedManager.getBool(SharedKeys.darkMode) ?? false;
-        }
+    if(SharedManager.instance.preferences != null){
+      switch(widget.sharedKeys){
+        case SharedKeys.darkMode:
+          isActive = SharedManager.instance.getBool(SharedKeys.darkMode) ?? false;
       }
-    });
+    }
     changeLoading();
   }
 
@@ -49,7 +45,7 @@ class _ActiveOrPassiveButtonState extends State<ActiveOrPassiveButton> {
           isActive = !isActive;
           switch (widget.sharedKeys) {
             case SharedKeys.darkMode:
-              _sharedManager.saveBool(SharedKeys.darkMode, isActive);
+              SharedManager.instance.saveBool(SharedKeys.darkMode, isActive);
           }
         });
       },

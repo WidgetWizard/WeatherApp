@@ -104,24 +104,29 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
     );
   }
 
+
+  void _openDrawer() {
+    _scaffoldKey.currentState!.openEndDrawer();
+  }
+
   Widget buildEndDrawer(BuildContext context) {
     return Drawer(
       width: context.sized.width * 0.5,
-      backgroundColor: Colors.white,
+      backgroundColor: context.general.theme.colorScheme.background,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           ListTile(
-            leading: Icon(Icons.settings,color: Colors.black,),
-            title: Text('Settings',style: context.general.textTheme.titleLarge?.copyWith(color: Colors.black),),
+            leading: Icon(Icons.settings,color: context.general.theme.primaryColor,),
+            title: Text('Settings',style: context.general.textTheme.titleLarge?.copyWith(color: context.general.theme.primaryColor),),
             onTap: () {
               context.route.pop();
               context.route.navigatePush(SettingsView());
             },
           ),
           ListTile(
-            leading: Icon(Icons.person,color: Colors.black,),
-            title: Text('About Us',style: context.general.textTheme.titleLarge?.copyWith(color: Colors.black),),
+            leading: Icon(Icons.person,color: context.general.theme.primaryColor,),
+            title: Text('About Us',style: context.general.textTheme.titleLarge?.copyWith(color: context.general.theme.primaryColor),),
             onTap: () {
               context.route.pop();
               context.route.navigatePush(AboutUsView());
@@ -130,10 +135,6 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
         ],
       ),
     );
-  }
-
-  void _openDrawer() {
-    _scaffoldKey.currentState!.openEndDrawer();
   }
 
   AppBar _weatherPageAppBar(BuildContext context) {
@@ -398,3 +399,12 @@ mixin _PageUtility on State<WeatherPageView> {
 
 
 //todo: settings de dil, theme, sıcaklık ayarları olucak!
+//dark mode a göre theme ayarlanıcak,
+//dil seçenegi ingilizce ve türkçe yapılcak
+//bildirim sorulucak
+//sıcaklık seçeneği seçimi yapılıcak!
+
+///todo: şimdi bloc ile state yönetimini yapıcam!
+///yarın mustiye languageyi yapmasını söylemeliyim!
+///buran itibaren bloc ile ayrı bir yol,dil seçeneği ile ayrı bi yol oluşturulmalı
+///

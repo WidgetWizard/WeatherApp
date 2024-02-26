@@ -16,13 +16,27 @@ abstract class ISharedManager{
 
 class SharedManager implements ISharedManager{
   SharedPreferences? preferences;
+  static SharedManager? _instance;
+
+  static SharedManager get instance {
+    if (_instance == null) {
+      throw Exception("Instance has not initalize");
+    }
+    return _instance!;
+  }
+
+  static void initializeInstance() {
+    _instance ??= SharedManager();
+  }
+
+  SharedManager(){
+    init();
+  }
 
   Future<void> init() async {
     preferences = await SharedPreferences.getInstance();
   }
-  SharedManager(){
-    init();
-  }
+
   void _checkPreferences(){
     if(preferences == null){
       throw SharedNotInitializeException();
