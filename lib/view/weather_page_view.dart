@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:weatherapp/product/extension/context/general.dart';
 import 'package:weatherapp/product/extension/context/icon_size.dart';
+import 'package:weatherapp/product/extension/context/navigation.dart';
 import 'package:weatherapp/product/extension/context/padding.dart';
 import 'package:weatherapp/product/extension/context/size.dart';
-
+import 'package:weatherapp/view/%C5%9Fehirler.dart';
+import 'package:weatherapp/view/about_us_view.dart';
+import 'package:weatherapp/view/settings_view.dart';
 
 import '../model/weather_model.dart';
 
@@ -13,7 +16,6 @@ import 'package:weatherapp/product/extension/weather_condition.dart';
 import 'package:weatherapp/service/weather_service.dart';
 import 'package:weatherapp/view_model/weather_page_view_model.dart';
 import 'package:lottie/lottie.dart';
-
 
 import '../product/api/project_api.dart';
 import '../product/widgets/value_container.dart';
@@ -27,22 +29,20 @@ class WeatherPageView extends StatefulWidget {
 
 class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
   Future<void> get refresh async {
-    setState(() {
-      initWeatherModel();
-    });
+    await initCurrentWeatherData();
+    setState(() {});
     if (isLoading) {
       while (isLoading) {
         await Future.delayed(const Duration(seconds: 1));
       }
     }
   }
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     var stringUnknown = "Unknown";
-
     return CustomMaterialIndicator(
-      onRefresh: () => refresh, //todo:burası yenileme çağrısı olucak!
+      onRefresh: () => refresh,
       indicatorBuilder: (context, controller) {
         return const Icon(
           Icons.ac_unit,
@@ -53,7 +53,7 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
       scrollableBuilder: (context, child, controller) {
         return FadeTransition(
           opacity:
-              Tween(begin: 1.0, end: 0.0).animate(controller.clamp(0.0, 1.0)),
+              Tween(begin: 1.0, end: 0.3).animate(controller.clamp(0.0, 1.0)),
           child: child,
         );
       },
@@ -66,10 +66,10 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
                   ? _loadingBarPlace()
                   : Stack(
                       children: [
-                        _weatherPageBackgroundImage(
-                            context), // todo: background image verilerle aynı anda gösterilecek!
+                        _weatherPageBackgroundImage(context),
                         Scaffold(
-                          //TODO: kaymayı düzelt => container içine alıp height'i tüm ekran büyüklüğü kadar ver
+                          key: _scaffoldKey,
+                          endDrawer: buildEndDrawer(context),
                           backgroundColor: Colors.transparent,
                           appBar: _weatherPageAppBar(context),
                           body: Padding(
@@ -100,7 +100,39 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
             ),
           ],
         ),
+      ),
+    );
+  }
 
+
+  void _openDrawer() {
+    _scaffoldKey.currentState!.openEndDrawer();
+  }
+
+  Widget buildEndDrawer(BuildContext context) {
+    return Drawer(
+      width: context.sized.width * 0.5,
+      backgroundColor: context.general.theme.colorScheme.background,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          ListTile(
+            leading: Icon(Icons.settings,color: context.general.theme.primaryColor,),
+            title: Text('Settings',style: context.general.textTheme.titleLarge?.copyWith(color: context.general.theme.primaryColor),),
+            onTap: () {
+              context.route.pop();
+              context.route.navigatePush(SettingsView());
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.person,color: context.general.theme.primaryColor,),
+            title: Text('About Us',style: context.general.textTheme.titleLarge?.copyWith(color: context.general.theme.primaryColor),),
+            onTap: () {
+              context.route.pop();
+              context.route.navigatePush(AboutUsView());
+            },
+          ),
+        ],
       ),
     );
   }
@@ -122,7 +154,9 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
         IconButton(
             iconSize: context.iconSize.large,
             color: Colors.white,
-            onPressed: () {},
+            onPressed: () {
+              _openDrawer();
+            },
             icon: Icon(Icons.drag_handle_outlined, shadows: <Shadow>[shadow]))
       ],
     );
@@ -136,7 +170,6 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
       headers: ProjectApi().getHeaders,
       fit: BoxFit.cover,
     );
-
   }
 }
 
@@ -144,89 +177,9 @@ class MyDelegate extends SearchDelegate {
   final CityWeatherService _cityWeatherService = CityWeatherService(
       apiKey: ProjectApi().getWeatherApi,
       baseUrl: "https://api.openweathermap.org/data/2.5");
+
   //? şehir isimlerini db mi yapalım uygulama içinde yoksa api mi kullanalım?
-  List<String> Searchresult = [
-    "ankara",
-    "adana",
-    "adıyaman",
-    "afyon",
-    "ağrı",
-    "aksaray",
-    "amasya",
-    "antalya",
-    "ardahan",
-    "artvin",
-    "aydın",
-    "balıkesir",
-    "bartın",
-    "batman",
-    "bayburt",
-    "bilecik",
-    "bingöl",
-    "bitlis",
-    "bolu",
-    "burdur",
-    "bursa",
-    "çanakkale",
-    "çankırı",
-    "çorum",
-    "denizli",
-    "diyarbakır",
-    "düzce",
-    "edirne",
-    "elazığ",
-    "erzincan",
-    "erzurum",
-    "eskişehir",
-    "gaziantep",
-    "giresun",
-    "gümüşhane",
-    "hakkari",
-    "hatay",
-    "ığdır",
-    "ısparta",
-    "mersin",
-    "istanbul",
-    "izmir",
-    "karabük",
-    "karaman",
-    "kars",
-    "kastamonu",
-    "kayseri",
-    "kırıkkale",
-    "kırklareli",
-    "kırşehir",
-    "kilis",
-    "kocaeli",
-    "konya",
-    "kütahya",
-    "malatya",
-    "manisa",
-    "mardin",
-    "muğla",
-    "muş",
-    "nevşehir",
-    "niğde",
-    "ordu",
-    "osmaniye",
-    "rize",
-    "sakarya",
-    "samsun",
-    "siirt",
-    "sinop",
-    "sivas",
-    "şanlıurfa",
-    "şırnak",
-    "tekirdağ",
-    "tokat",
-    "trabzon",
-    "tunceli",
-    "uşak",
-    "van",
-    "yalova",
-    "yozgat",
-    "zonguldak"
-  ];
+  List<String> searchResult = Searchresult;
   @override
   List<Widget>? buildActions(BuildContext context) => [
         IconButton(
@@ -289,7 +242,7 @@ class MyDelegate extends SearchDelegate {
                         ListTile(
                           leading: const Icon(Icons.umbrella),
                           title: const Text("Yağmur Oranı"),
-                          trailing: Text("${weatherData.rain}"),
+                          trailing: Text("${weatherData.rain ?? 0.0}"),
                         ),
                       ],
                     ),
@@ -317,7 +270,6 @@ class MyDelegate extends SearchDelegate {
         );
       },
     );
-
   }
 }
 
@@ -444,3 +396,15 @@ mixin _PageUtility on State<WeatherPageView> {
     );
   }
 }
+
+
+//todo: settings de dil, theme, sıcaklık ayarları olucak!
+//dark mode a göre theme ayarlanıcak,
+//dil seçenegi ingilizce ve türkçe yapılcak
+//bildirim sorulucak
+//sıcaklık seçeneği seçimi yapılıcak!
+
+///todo: şimdi bloc ile state yönetimini yapıcam!
+///yarın mustiye languageyi yapmasını söylemeliyim!
+///buran itibaren bloc ile ayrı bir yol,dil seçeneği ile ayrı bi yol oluşturulmalı
+///
