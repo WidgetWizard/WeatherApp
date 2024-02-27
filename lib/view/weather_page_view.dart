@@ -1,11 +1,13 @@
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:weatherapp/model/city_name_model.dart';
 import 'package:weatherapp/product/extension/context/general.dart';
 import 'package:weatherapp/product/extension/context/icon_size.dart';
 import 'package:weatherapp/product/extension/context/navigation.dart';
 import 'package:weatherapp/product/extension/context/padding.dart';
 import 'package:weatherapp/product/extension/context/size.dart';
+import 'package:weatherapp/service/city_name_sevice.dart';
 import 'package:weatherapp/view/%C5%9Fehirler.dart';
 import 'package:weatherapp/view/about_us_view.dart';
 import 'package:weatherapp/view/settings_view.dart';
@@ -255,19 +257,37 @@ class MyDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    List<String> cityname =
-        Searchresult.where((element) => element.startsWith(query)).toList();
-
-    return ListView.builder(
-      itemCount: cityname.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          onTap: () {
-            query = cityname[index];
-            showResults(context); // Add this line
-          },
-          title: Text(cityname[index]),
-        );
+    return FutureBuilder<List<CityNameModel>>(
+      future: fetchCityName(query), // your Future<List<String>> function
+      builder: (BuildContext context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return ListView.builder(
+            itemCount: 5,
+            itemBuilder: (BuildContext context, int index) {
+              return Column(
+                children: [ListTile(title: Text("  ")), Divider()],
+              );
+            },
+          ); // show a loading spinner while waiting
+        } else if (snapshot.hasError) {
+          return Text(
+              'Error: ${snapshot.error}'); // show an error message if something went wrong
+        } else {
+          // build a list of widgets based on the List<String>
+          return ListView.builder(
+            itemCount: snapshot.data!
+                .length, // todo: bütün itemleri tut listeye çevir ve onu döndür yoksa her seferinde apiye istek atar
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                title: Text(snapshot.data![index].cityName!),
+                onTap: () {
+                  query = snapshot.data![index].cityName!;
+                  showResults(context);
+                },
+              );
+            },
+          );
+        }
       },
     );
   }
