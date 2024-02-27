@@ -4,10 +4,13 @@ import 'package:intl/intl.dart';
 import 'package:weatherapp/model/city_name_model.dart';
 import 'package:weatherapp/product/extension/context/general.dart';
 import 'package:weatherapp/product/extension/context/icon_size.dart';
+import 'package:weatherapp/product/extension/context/navigation.dart';
 import 'package:weatherapp/product/extension/context/padding.dart';
 import 'package:weatherapp/product/extension/context/size.dart';
 import 'package:weatherapp/service/city_name_sevice.dart';
 import 'package:weatherapp/view/%C5%9Fehirler.dart';
+import 'package:weatherapp/view/about_us_view.dart';
+import 'package:weatherapp/view/settings_view.dart';
 
 import '../model/weather_model.dart';
 
@@ -36,7 +39,7 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
       }
     }
   }
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     var stringUnknown = "Unknown";
@@ -67,6 +70,8 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
                       children: [
                         _weatherPageBackgroundImage(context),
                         Scaffold(
+                          key: _scaffoldKey,
+                          endDrawer: buildEndDrawer(context),
                           backgroundColor: Colors.transparent,
                           appBar: _weatherPageAppBar(context),
                           body: Padding(
@@ -101,6 +106,39 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
     );
   }
 
+
+  void _openDrawer() {
+    _scaffoldKey.currentState!.openEndDrawer();
+  }
+
+  Widget buildEndDrawer(BuildContext context) {
+    return Drawer(
+      width: context.sized.width * 0.5,
+      backgroundColor: context.general.theme.colorScheme.background,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          ListTile(
+            leading: Icon(Icons.settings,color: context.general.theme.primaryColor,),
+            title: Text('Settings',style: context.general.textTheme.titleLarge?.copyWith(color: context.general.theme.primaryColor),),
+            onTap: () {
+              context.route.pop();
+              context.route.navigatePush(SettingsView());
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.person,color: context.general.theme.primaryColor,),
+            title: Text('About Us',style: context.general.textTheme.titleLarge?.copyWith(color: context.general.theme.primaryColor),),
+            onTap: () {
+              context.route.pop();
+              context.route.navigatePush(AboutUsView());
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   AppBar _weatherPageAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.transparent,
@@ -119,7 +157,7 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
             iconSize: context.iconSize.large,
             color: Colors.white,
             onPressed: () {
-              //todo: drawer tasarlanıcak
+              _openDrawer();
             },
             icon: Icon(Icons.drag_handle_outlined, shadows: <Shadow>[shadow]))
       ],
@@ -378,3 +416,15 @@ mixin _PageUtility on State<WeatherPageView> {
     );
   }
 }
+
+
+//todo: settings de dil, theme, sıcaklık ayarları olucak!
+//dark mode a göre theme ayarlanıcak,
+//dil seçenegi ingilizce ve türkçe yapılcak
+//bildirim sorulucak
+//sıcaklık seçeneği seçimi yapılıcak!
+
+///todo: şimdi bloc ile state yönetimini yapıcam!
+///yarın mustiye languageyi yapmasını söylemeliyim!
+///buran itibaren bloc ile ayrı bir yol,dil seçeneği ile ayrı bi yol oluşturulmalı
+///
