@@ -1,15 +1,20 @@
-
-
 import 'package:flutter/material.dart';
 
-class DarkTheme{
+class DarkTheme {
   late ThemeData theme;
 
-  DarkTheme(){
+  DarkTheme() {
     theme = ThemeData(
+      scaffoldBackgroundColor: Colors.black,
       useMaterial3: true,
-      colorScheme: ColorScheme.dark(background: Colors.black),
+      colorScheme: ColorScheme.dark(
+        background: Colors.black,
+      ),
       primaryColor: Colors.white,
+      textTheme: ThemeData.dark().textTheme.copyWith(
+        headlineMedium: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 30),
+        titleLarge: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 20),
+      ),
     );
   }
 }

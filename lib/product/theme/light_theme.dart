@@ -1,26 +1,20 @@
-
 import 'package:flutter/material.dart';
 
-class LightTheme{
+class LightTheme {
   late ThemeData theme;
 
-  LightTheme(){
+  LightTheme() {
     theme = ThemeData(
+      scaffoldBackgroundColor: Colors.white,
       useMaterial3: true,
-      primaryColor: Colors.black,
-      /*primaryColorLight: Colors.white,
-      primaryColorDark: Colors.black,*/
-      colorScheme: ColorScheme.light(background: Colors.white),
-      /*buttonTheme: ButtonThemeData(
-        buttonColor: Color(0xff0f1bbf),
-        highlightColor: Colors.red,
+      colorScheme: ColorScheme.light(
+          background: Colors.white,
       ),
+      primaryColor: Colors.black,
       textTheme: TextTheme(
-        titleLarge: TextStyle(color: Colors.black,),
-        displayLarge: TextStyle(color: Colors.black),
-        titleMedium: TextStyle(color: Colors.black),
-        displaySmall: TextStyle(color: Colors.black),
-      ),*/
+        headlineMedium: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 30),
+        titleLarge: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 20),
+      ),
     );
   }
 }
