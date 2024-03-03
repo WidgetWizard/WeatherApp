@@ -8,6 +8,7 @@ import 'package:weatherapp/product/theme/dark_theme.dart';
 import 'package:weatherapp/product/theme/light_theme.dart';
 import 'package:weatherapp/view/weather_page_view.dart';
 import 'package:weatherapp/product/widgets/no_network.dart';
+import 'package:weatherapp/view_model/settings_view_cubit/settings_view_cubit.dart';
 
 Future<void> main() async {
   final MainInitialize mainInitialize = MainInitialize();
@@ -17,9 +18,8 @@ Future<void> main() async {
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => GlobalManageProvider.globalManageCubit,
-        ),
+        BlocProvider(create: (context) => GlobalManageProvider.globalManageCubit,),
+        BlocProvider(create: (context) => SettingsViewCubit(),),
       ],
       child: Main(),
     ),
@@ -64,5 +64,5 @@ class Main extends StatelessWidget {
 //todo:bug => bildirim izni istedikten sonra konum izni almıyor!
 //todo: drizzle diye bi hava durumu fotosu eklenmemiş yani images i yok!
 //todo: providerda cache ediliyor mu bu darkModeActive bilmiyorum ama uygulamayı geri çalıştırdıgımda false
-//todo: value_container a bir bak ve burda rain in degerini çarparak ekle!
 //todo: burda blocBuilder ie yapıldıgında sürekli olarak o metodu okuor galiba buna bir baksana!
+//todo: theme ayarlandı ama cache edilmesi gerekiyor!

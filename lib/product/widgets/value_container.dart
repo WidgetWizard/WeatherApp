@@ -25,7 +25,7 @@ class ValueContainer extends StatelessWidget {
         children: [
           Text(valueName,style: context.general.textTheme.titleLarge?.copyWith(color: Colors.white,shadows: <Shadow>[shadow,],),),
           Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
-            Text("${setPercentValue() ?? "unknown"}",style: context.general.textTheme.titleLarge?.copyWith(color: Colors.white, shadows: <Shadow>[shadow,],),),
+            Text("${setPercentValue()?.toStringAsFixed(2) ?? "unknown"}",style: context.general.textTheme.titleLarge?.copyWith(color: Colors.white, shadows: <Shadow>[shadow,],),),
             Text((isPercentage ?? false) ? 'km/h' : (isRain ?? false) ? "mm" : "%",
                 style: context.general.textTheme.titleLarge?.copyWith(
                   color: Colors.white,

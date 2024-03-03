@@ -14,7 +14,11 @@ class LightTheme {
       textTheme: TextTheme(
         headlineMedium: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 30),
         titleLarge: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 20),
+        headlineSmall: TextStyle(color: Colors.black,fontSize: 26),
       ),
+      dialogTheme: DialogTheme(
+        backgroundColor: Color(0xffFEFAFA),
+      )
     );
   }
 }

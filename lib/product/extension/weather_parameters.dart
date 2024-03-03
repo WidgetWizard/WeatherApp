@@ -15,7 +15,7 @@ extension WeatherParametersExtension on WeatherParameters{
       case WeatherParameters.humidity:
         return (percent ?? 0) / 100;
       case WeatherParameters.rain:
-        return (percent ?? 0) / 10000; //todo: burasına bak yagmur oranı varken! 10000 ile çarpılıcak ekranda gösterimi veya bakıcam
+        return (percent ?? 0) / 10000;
     }
   }
   String get capitalizeValue {

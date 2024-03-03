@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weatherapp/core/custom_elevated_button.dart';
 import 'package:weatherapp/product/extension/context/duration.dart';
@@ -11,8 +12,10 @@ import 'package:weatherapp/product/global/cubit/global_manage_state.dart';
 import 'package:weatherapp/product/global/provider/global_manage_provider.dart';
 import 'package:weatherapp/product/widgets/active_or_passive_button.dart';
 import 'package:weatherapp/service/shared_preferences.dart';
+import 'package:weatherapp/view_model/settings_view_cubit/settings_view_cubit.dart';
+import 'package:weatherapp/view_model/settings_view_cubit/settings_view_state.dart';
 
-class SettingsView extends StatelessWidget {
+class SettingsView extends StatelessWidget with _SettingsViewUtility{
   const SettingsView({Key? key,}) : super(key: key);
 
   @override
@@ -42,7 +45,7 @@ class SettingsView extends StatelessWidget {
                       leadingIcon: Icons.notifications,
                       circleAvatarBackgroundColor: Color(0xffffe9e9),
                       leadingColor: Color(0xffff6969),
-                      trailingWidget: _settingsCardButton(context),
+                      trailingWidget: _settingsCardButton(context, onPressed: () {  }),
                     ),
                     _SettingsCard(
                       title: "Dark Mode",
@@ -53,6 +56,15 @@ class SettingsView extends StatelessWidget {
                         sharedKeys: SharedKeys.darkMode,
                       ),
                     ),
+                    _SettingsCard(
+                      title: "Temperature Unit ",
+                      circleAvatarBackgroundColor: Color(0xffebebf1),
+                      leadingIcon: Icons.thermostat_outlined,
+                      leadingColor: Color(0xffff5050),
+                      trailingWidget: _settingsCardButton(context, onPressed: () {
+                        _showLanguageDialog(context);
+                      }),
+                    ),
                   ],
                 ),
               ),
@@ -60,6 +72,63 @@ class SettingsView extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _SettingsCard extends StatelessWidget {
+  const _SettingsCard(
+      {Key? key,
+      required this.title,
+      required this.leadingIcon,
+      required this.trailingWidget,
+      required this.leadingColor,
+      required this.circleAvatarBackgroundColor,})
+      : super(key: key);
+  final String title;
+  final IconData leadingIcon;
+  final Color leadingColor;
+  final Widget trailingWidget;
+  final Color circleAvatarBackgroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.transparent,
+      elevation: 0,
+      child: ListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(title, style: GlobalManageProvider.globalManageCubit.state.themeData?.textTheme.titleLarge),
+          leading: CircleAvatar(
+              backgroundColor: circleAvatarBackgroundColor,
+              radius: 25,
+              child: Icon(
+                leadingIcon,
+                color: leadingColor,
+                size: 35,
+              )),
+          trailing: trailingWidget),
+    );
+  }
+}
+
+
+mixin _SettingsViewUtility{
+  Padding _settingsCardButton(BuildContext context,{required void Function() onPressed}) {
+    return Padding(
+      padding: context.padding.dynamicOnly(left: 0.01),
+      child: CustomElevatedButton(
+        width: context.sized.width * 0.12,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Icon(
+            size: 16,
+            Icons.arrow_forward_ios_outlined,
+            color: Colors.black
+        ),
+        onPressed: onPressed,
+        elevation: 0,
+        backgroundColor: Color(0xffebebf1),
+      ),
     );
   }
 
@@ -107,63 +176,70 @@ class SettingsView extends StatelessWidget {
             style: context.general.textTheme.titleSmall
                 ?.copyWith(color: Colors.grey),
           ),
-          _settingsCardButton(context),
+          _settingsCardButton(context, onPressed: () {  }),
         ],
       ),
     );
   }
 
-  Padding _settingsCardButton(BuildContext context) {
-    return Padding(
-      padding: context.padding.dynamicOnly(left: 0.01),
-      child: CustomElevatedButton(
-        width: context.sized.width * 0.12,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Icon(
-          size: 16,
-          Icons.arrow_forward_ios_outlined,
-          color: Colors.black
-        ),
-        onPressed: () {},
-        elevation: 0,
-        backgroundColor: Color(0xffebebf1),
+  Card _temperatureUnitCard({required String title,required void Function() onTap,required SettingsViewState settingsState,required int index}) {
+    return Card(
+      child: ListTile(
+        title: Center(child: Text(title,style: GlobalManageProvider.globalManageCubit.state.themeData?.textTheme.titleLarge,)),
+        onTap: onTap,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20)),
       ),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20)),
+      color: (settingsState.temperatureItems?[index].isSelected ?? false)
+          ? Color(0xff0f1bbf)
+          : GlobalManageProvider.globalManageCubit.state.themeData?.cardTheme.color,
     );
   }
-}
 
-class _SettingsCard extends StatelessWidget {
-  const _SettingsCard(
-      {Key? key,
-      required this.title,
-      required this.leadingIcon,
-      required this.trailingWidget,
-      required this.leadingColor,
-      required this.circleAvatarBackgroundColor,})
-      : super(key: key);
-  final String title;
-  final IconData leadingIcon;
-  final Color leadingColor;
-  final Widget trailingWidget;
-  final Color circleAvatarBackgroundColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Colors.transparent,
-      elevation: 0,
-      child: ListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Text(title, style: GlobalManageProvider.globalManageCubit.state.themeData?.textTheme.titleLarge),
-          leading: CircleAvatar(
-              backgroundColor: circleAvatarBackgroundColor,
-              radius: 25,
-              child: Icon(
-                leadingIcon,
-                color: leadingColor,
-                size: 35,
-              )),
-          trailing: trailingWidget),
+  void _showLanguageDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return BlocBuilder<SettingsViewCubit, SettingsViewState>(
+          builder: (context, state) {
+            return AlertDialog(
+              backgroundColor: GlobalManageProvider.globalManageCubit.state
+                  .themeData?.dialogTheme.backgroundColor,
+              title: Text(
+                'Select Temperature Unit',
+                style: GlobalManageProvider.globalManageCubit.state.themeData
+                    ?.textTheme.headlineSmall,
+              ),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    SizedBox(
+                      width: context.sized.dynamicWidth(0.6),
+                      height: context.sized.dynamicHeigth(0.28),
+                      child: ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: state.temperatureItems?.length,
+                        itemBuilder: (context, index) {
+                          return _temperatureUnitCard(
+                            index: index,
+                            settingsState: state,
+                            title: (state.temperatureItems?[index].temperatureName ?? "Unknown"),
+                            onTap: () {
+                              context.read<SettingsViewCubit>().changeTemperatureUnitValue(index);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

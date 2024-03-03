@@ -174,9 +174,6 @@ mixin _PageUtility on State<WeatherPageView> {
     );
   }
 
-  double _setPercent(WeatherModel? weatherModel) =>
-      (weatherModel?.rain != null ? (weatherModel!.rain! * 100) : (0.00));
-
   Padding _divider(BuildContext context) {
     return Padding(
       padding: context.padding.topOnlyMedium,
@@ -369,9 +366,5 @@ class MyDelegate extends SearchDelegate {
 }
 
 //todo: settings de dil, theme, sıcaklık ayarları olucak!
-//dark mode a göre theme ayarlanıcak,
-//dil seçenegi ingilizce ve türkçe yapılcak
 //bildirim sorulucak
 //sıcaklık seçeneği seçimi yapılıcak!
-
-///todo: şimdi bloc ile state yönetimini yapıcam!
