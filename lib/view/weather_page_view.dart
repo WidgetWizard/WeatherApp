@@ -1,11 +1,13 @@
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:weatherapp/model/city_name_model.dart';
 import 'package:weatherapp/product/extension/context/general.dart';
 import 'package:weatherapp/product/extension/context/icon_size.dart';
 import 'package:weatherapp/product/extension/context/padding.dart';
 import 'package:weatherapp/product/extension/context/size.dart';
 import 'package:weatherapp/product/extension/weather_parameters.dart';
+
 import 'package:weatherapp/view/%C5%9Fehirler.dart';
 import 'package:weatherapp/view/weather_page_view_parts/part_of_drawer.dart';
 
@@ -140,6 +142,125 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
       randomImageUrl,
       headers: ProjectApi().getHeaders,
       fit: BoxFit.cover,
+    );
+  }
+}
+
+
+class MyDelegate extends SearchDelegate {
+  final CityWeatherService _cityWeatherService = CityWeatherService(
+      apiKey: ProjectApi().getWeatherApi,
+      baseUrl: "https://api.openweathermap.org/data/2.5");
+
+  //? şehir isimlerini db mi yapalım uygulama içinde yoksa api mi kullanalım?
+  List<String> searchResult = Searchresult;
+  @override
+  List<Widget>? buildActions(BuildContext context) => [
+        IconButton(
+          onPressed: () => query = "",
+          icon: const Icon(Icons.clear),
+        )
+      ];
+
+  @override
+  Widget? buildLeading(BuildContext context) => IconButton(
+        onPressed: () => close(context, null),
+        icon: const Icon(Icons.arrow_back_ios_outlined),
+      );
+
+  @override
+  Widget buildResults(BuildContext context) {
+    // FutureBuilder kullanarak asenkron veri çekme işlemi
+    return FutureBuilder<WeatherModel?>(
+      future: _cityWeatherService.getCityWeatherData(query),
+      builder: (BuildContext context, AsyncSnapshot<WeatherModel?> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Hata: ${snapshot.error}'));
+        } else {
+          // Veri çekme işlemi başarılı olduysa, veriyi göster
+          WeatherModel? weatherData = snapshot.data;
+          return weatherData == null
+              ? const Center(child: Text(""))
+              : Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ListTile(
+                          title: Center(
+                              child: Text(weatherData.cityName ?? "Unknown")),
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.thermostat_outlined),
+                          title: const Text("Sıcaklık"),
+                          trailing: Text("${weatherData.temp}"),
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.cloud),
+                          title: const Text("Durum"),
+                          trailing: Text("${weatherData.mainCondition}"),
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.air),
+                          title: const Text("Rüzgar"),
+                          trailing: Text("${weatherData.wind}"),
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.water_damage),
+                          title: const Text("Nem"),
+                          trailing: Text("${weatherData.humidity}"),
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.umbrella),
+                          title: const Text("Yağmur Oranı"),
+                          trailing: Text("${weatherData.rain ?? 0.0}"),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+        }
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return FutureBuilder<List<CityNameModel>>(
+      future: fetchCityName(query), // your Future<List<String>> function
+      builder: (BuildContext context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return ListView.builder(
+            itemCount: 5,
+            itemBuilder: (BuildContext context, int index) {
+              return Column(
+                children: [ListTile(title: Text("  ")), Divider()],
+              );
+            },
+          ); // show a loading spinner while waiting
+        } else if (snapshot.hasError) {
+          return Text(
+              'Error: ${snapshot.error}'); // show an error message if something went wrong
+        } else {
+          // build a list of widgets based on the List<String>
+          return ListView.builder(
+            itemCount: snapshot.data!
+                .length, // todo: bütün itemleri tut listeye çevir ve onu döndür yoksa her seferinde apiye istek atar
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                title: Text(snapshot.data![index].cityName!),
+                onTap: () {
+                  query = snapshot.data![index].cityName!;
+                  showResults(context);
+                },
+              );
+            },
+          );
+        }
+      },
     );
   }
 }

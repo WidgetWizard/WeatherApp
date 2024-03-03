@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weatherapp/product/global/cubit/global_manage_cubit.dart';
 import 'package:weatherapp/product/global/cubit/global_manage_state.dart';
 import 'package:weatherapp/product/global/provider/global_manage_provider.dart';
+
 import 'package:weatherapp/product/init/initialize.dart';
 import 'package:weatherapp/product/theme/dark_theme.dart';
 import 'package:weatherapp/product/theme/light_theme.dart';
