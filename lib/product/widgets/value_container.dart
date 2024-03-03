@@ -25,7 +25,7 @@ class ValueContainer extends StatelessWidget {
         children: [
           Text(valueName,style: context.general.textTheme.titleLarge?.copyWith(color: Colors.white,shadows: <Shadow>[shadow,],),),
           Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
-            Text("${percent ?? "unknown"}",style: context.general.textTheme.titleLarge?.copyWith(color: Colors.white, shadows: <Shadow>[shadow,],),),
+            Text("${setPercentValue()?.toStringAsFixed(2) ?? "unknown"}",style: context.general.textTheme.titleLarge?.copyWith(color: Colors.white, shadows: <Shadow>[shadow,],),),
             Text((isPercentage ?? false) ? 'km/h' : (isRain ?? false) ? "mm" : "%",
                 style: context.general.textTheme.titleLarge?.copyWith(
                   color: Colors.white,
@@ -36,11 +36,26 @@ class ValueContainer extends StatelessWidget {
           LinearPercentIndicator(
             padding: EdgeInsets.zero,
             progressColor: Colors.red,
-            percent: (percent ?? 0) / 100,
+            percent: (percent ?? 0),
             backgroundColor: Colors.white24,
           ),
         ],
       ),
     );
+  }
+
+  double? setPercentValue(){
+    if(percent != null){
+      if (isPercentage ?? false) {
+        return percent! * 100;
+      }
+      else if(isRain ?? false) {
+        return percent! * 10000;
+      }
+      else{
+        return percent! * 100;
+      }
+    }
+    return null;
   }
 }

@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weatherapp/product/global/cubit/global_manage_cubit.dart';
+import 'package:weatherapp/product/global/cubit/global_manage_state.dart';
 import 'package:weatherapp/service/shared_preferences.dart';
+
+import '../global/provider/global_manage_provider.dart';
 
 class ActiveOrPassiveButton extends StatefulWidget {
   const ActiveOrPassiveButton({Key? key, required this.sharedKeys})
@@ -11,70 +16,43 @@ class ActiveOrPassiveButton extends StatefulWidget {
 }
 
 class _ActiveOrPassiveButtonState extends State<ActiveOrPassiveButton> {
-  late bool isActive = false;
-  bool isLoading = false;
-
-  @override
-  void initState() {
-    _initialize();
-    super.initState();
-  }
-
-  Future<void> _initialize() async {
-    changeLoading();
-    if(SharedManager.instance.preferences != null){
-      switch(widget.sharedKeys){
-        case SharedKeys.darkMode:
-          isActive = SharedManager.instance.getBool(SharedKeys.darkMode) ?? false;
-      }
-    }
-    changeLoading();
-  }
-
-  void changeLoading() {
-    setState(() {
-      isLoading == !isLoading;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        setState(() {
-          isActive = !isActive;
-          switch (widget.sharedKeys) {
-            case SharedKeys.darkMode:
-              SharedManager.instance.saveBool(SharedKeys.darkMode, isActive);
-          }
-        });
-      },
-      child: Container(
-        width: 60,
-        height: 30,
-        decoration: BoxDecoration(
-          color: isActive ? Color(0xff0f1bbf) : Colors.grey,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Stack(
-          alignment: isActive ? Alignment.centerRight : Alignment.centerLeft,
-          children: [
-            AnimatedPositioned(
-              left: isActive ? 35 : 5,
-              right: isActive ? 5 : 35,
-              duration: const Duration(milliseconds: 150),
-              child: Container(
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+    return BlocBuilder<GlobalManageCubit, GlobalManageState>(
+      builder: (context, state) {
+        return InkWell(
+          onTap: () {
+            GlobalManageProvider.globalManageCubit.changeDarkMode(widget.sharedKeys);
+          },
+          child: Container(
+            width: 60,
+            height: 30,
+            decoration: BoxDecoration(
+              color: (state.darkModeIsActive ?? false) ? Color(0xff0f1bbf) : Colors.grey,
+              borderRadius: BorderRadius.circular(15),
             ),
-          ],
-        ),
-      ),
+            child: Stack(
+              alignment: (state.darkModeIsActive ?? false) ? Alignment.centerRight : Alignment
+                  .centerLeft,
+              children: [
+                AnimatedPositioned(
+                  left: (state.darkModeIsActive ?? false) ? 35 : 5,
+                  right: (state.darkModeIsActive ?? false) ? 5 : 35,
+                  duration: const Duration(milliseconds: 150),
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
