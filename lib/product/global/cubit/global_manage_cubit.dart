@@ -26,10 +26,6 @@ class GlobalManageCubit extends Cubit<GlobalManageState> {
       SharedManager.instance.saveBool(sharedKeys, tempDarkModeValue);
 
     }
-/*    switch(sharedKeys){
-      case SharedKeys.darkMode:
-        SharedManager.instance.saveBool(sharedKeys, tempDarkModeValue);
-    }*/
     emit(state.copyWith(darkModeIsActive: tempDarkModeValue));
     emit(state.copyWith(isLoading: false));
   }

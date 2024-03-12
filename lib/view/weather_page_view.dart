@@ -356,26 +356,30 @@ mixin _PageUtility on State<WeatherPageView> {
       {required String mainCondition, WeatherModel? weatherModel}) {
     return Padding(
       padding: context.padding.dynamicOnly(top: 0.02),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: context.padding.rightOnlyNormal,
-            child: Image.asset(
-                WeatherCondition.rain.getWeatherConditionGif(weatherModel) ??
-                    ""),
-          ),
-          Text(
-            mainCondition,
-            style: context.general.textTheme.titleLarge?.copyWith(
-              color: Colors.white,
-              fontSize: context.sized.dynamicHeigth(0.037),
-              shadows: <Shadow>[
-                shadow,
-              ],
+      child: Container(
+        height: context.sized.dynamicHeigth(0.06),
+        width: context.sized.width,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: context.padding.rightOnlyNormal,
+              child: Image.asset(
+                  WeatherCondition.rain.getWeatherConditionGif(weatherModel) ??
+                      ""),
             ),
-          ),
-        ],
+            Text(
+              mainCondition,
+              style: context.general.textTheme.titleLarge?.copyWith(
+                color: Colors.white,
+                fontSize: context.sized.dynamicHeigth(0.037),
+                shadows: <Shadow>[
+                  shadow,
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

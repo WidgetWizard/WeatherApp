@@ -41,13 +41,6 @@ class SettingsView extends StatelessWidget with _SettingsViewUtility{
                       circleAvatarBackgroundColor: Color(0xffe5eef9),
                     ),
                     _SettingsCard(
-                      title: "Notification",
-                      leadingIcon: Icons.notifications,
-                      circleAvatarBackgroundColor: Color(0xffffe9e9),
-                      leadingColor: Color(0xffff6969),
-                      trailingWidget: _settingsCardButton(context, onPressed: () {  }),
-                    ),
-                    _SettingsCard(
                       title: "Dark Mode",
                       circleAvatarBackgroundColor: Color(0xfff6e8d6),
                       leadingColor: Color(0xfff99417),
@@ -62,7 +55,7 @@ class SettingsView extends StatelessWidget with _SettingsViewUtility{
                       leadingIcon: Icons.thermostat_outlined,
                       leadingColor: Color(0xffff5050),
                       trailingWidget: _settingsCardButton(context, onPressed: () {
-                        _showLanguageDialog(context);
+                        _showTemperatureUnitDialog(context);
                       }),
                     ),
                   ],
@@ -198,7 +191,7 @@ mixin _SettingsViewUtility{
     );
   }
 
-  void _showLanguageDialog(BuildContext context) {
+  void _showTemperatureUnitDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
