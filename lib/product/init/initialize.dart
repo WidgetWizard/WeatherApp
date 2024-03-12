@@ -10,9 +10,11 @@ class MainInitialize{
   late final GlobalManageCubit _globalManageCubit;
   Future<void> sharedInit() async {
     WidgetsFlutterBinding.ensureInitialized();
-    await SharedManager().init(); // init yöntemini çağırarak SharedManager'ı başlat
     SharedManager.initializeInstance();
+    await SharedManager.instance.init();
+    print("init işlemleri tammalandı!");
   }
+
 
   void globalCubitInit(){
     _globalManageCubit = GlobalManageCubit();

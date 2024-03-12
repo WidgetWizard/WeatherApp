@@ -13,10 +13,8 @@ class GlobalManageCubit extends Cubit<GlobalManageState> {
   void getCacheValues(SharedKeys sharedKeys){
     emit(state.copyWith(isLoading: true));
     if(SharedManager.instance.preferences != null){
-      switch(sharedKeys){
-        case SharedKeys.darkMode:
-          emit(state.copyWith(darkModeIsActive: SharedManager.instance.getBool(sharedKeys)));
-      }
+      emit(state.copyWith(darkModeIsActive: SharedManager.instance.getBool(SharedKeys.darkMode)));
+      emit(state.copyWith(temperatureUnit: SharedManager.instance.getString(SharedKeys.temperatureUnit)));
     }
     emit(state.copyWith(isLoading: false));
   }
@@ -24,18 +22,22 @@ class GlobalManageCubit extends Cubit<GlobalManageState> {
   void changeDarkMode(SharedKeys sharedKeys){
     emit(state.copyWith(isLoading: true));
     final tempDarkModeValue = !(state.darkModeIsActive ?? false);
-    switch(sharedKeys){
+    if(sharedKeys == SharedKeys.darkMode){
+      SharedManager.instance.saveBool(sharedKeys, tempDarkModeValue);
+
+    }
+/*    switch(sharedKeys){
       case SharedKeys.darkMode:
         SharedManager.instance.saveBool(sharedKeys, tempDarkModeValue);
-    }
+    }*/
     emit(state.copyWith(darkModeIsActive: tempDarkModeValue));
     emit(state.copyWith(isLoading: false));
   }
 
   ThemeData changeThemeDataValue(){
-    emit(state.copyWith(isLoading: true));
     final DarkTheme _darkTheme = DarkTheme();
     final LightTheme _lightTheme = LightTheme();
+    emit(state.copyWith(isLoading: true));
     ThemeData tempThemeData = ThemeData();
     if(state.darkModeIsActive ?? false){
       tempThemeData = _darkTheme.theme;
