@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:weatherapp/product/extension/temperature_units.dart';
 import 'package:weatherapp/product/global/cubit/global_manage_state.dart';
 import 'package:weatherapp/service/shared_preferences.dart';
 
@@ -47,4 +48,12 @@ class GlobalManageCubit extends Cubit<GlobalManageState> {
     emit(state.copyWith(isLoading: false));
     return tempThemeData;
   }
+
+  void getTemperatureUnit(int index){
+    emit(state.copyWith(isLoading: true));
+    final tempUnit = TemperatureUnit.values[index].getTemperatureUnit();
+    print(tempUnit);
+    emit(state.copyWith(temperatureUnit: tempUnit,isLoading: false,));
+  }
+
 }

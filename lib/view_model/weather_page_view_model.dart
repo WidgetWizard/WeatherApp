@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import '../model/weather_five_days_with_three_hours_model.dart';
 import '../model/weather_model.dart';
 import '../product/api/project_api.dart';
+import '../product/extension/temperature_units.dart';
+import '../product/global/provider/global_manage_provider.dart';
 import '../service/background_image_service.dart';
 import '../service/notification_service.dart';
 import '../service/weather_service.dart';
@@ -20,17 +22,24 @@ abstract class WeatherPageViewModel extends State<WeatherPageView> {
   WeatherFiveDaysWithThreeHourModel? weatherThreeHoursModel;
   late final IWeatherService _weatherThreeHoursService;
   bool isLoading = false;
+  late String temperatureUnit = GlobalManageProvider.globalManageCubit.state.temperatureUnit ?? TemperatureUnit.Metric.getTemperatureUnit();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    temperatureUnit = GlobalManageProvider.globalManageCubit.state.temperatureUnit ?? TemperatureUnit.Metric.getTemperatureUnit();
+  }
 
   @override
   void initState() {
     super.initState();
     _initStateForLateObjects();
-    _initBackgroundImageAndWeather();
+    initWeatherDatas();
     _startTimer();
     print("weatherThreeHoursModel :${weatherThreeHoursModel?.cityName}");
   }
 
-  Future<void> _initBackgroundImageAndWeather() async {
+  Future<void> initWeatherDatas() async {
     setState(() {
       isLoading = true;
     });
@@ -49,27 +58,22 @@ abstract class WeatherPageViewModel extends State<WeatherPageView> {
     });
   }
 
-  Future<void> _initStateForLateObjects() async {
-    notificationService = NotificationService();
+  void _initStateForLateObjects() {
     _weatherService = CurrentWeatherService(apiKey: _weatherApiKey, baseUrl: _baseUrl);
     _weatherThreeHoursService = WeatherServiceForFiveDaysWithThreeHours(apiKey: _weatherApiKey, baseUrl: _baseUrl);
-    await notificationService.initializeNotification(null);
   }
 
   Future<WeatherModel?> initCurrentWeatherData() async {
     WeatherModel? weather;
     await _weatherService.getLocationWithPermission();
-    weather = await _weatherService.getWeatherData();
+    weather = await _weatherService.getWeatherData(unit: temperatureUnit);
     return weather;
   }
   Future<WeatherFiveDaysWithThreeHourModel?> initFiveDaysThreeHoursWeatherData() async {
     WeatherFiveDaysWithThreeHourModel model;
     await _weatherThreeHoursService.getLocationWithPermission();
-    model = await _weatherThreeHoursService.getWeatherData();
+    model = await _weatherThreeHoursService.getWeatherData(unit: temperatureUnit);
     print("model :${model.cityName}");
-/*    setState(() {
-      weatherThreeHoursModel = model;
-    });*/
     return model;
   }
 

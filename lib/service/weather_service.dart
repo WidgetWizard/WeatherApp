@@ -1,6 +1,6 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
-import 'package:weatherapp/product/constant/const.dart';
+import 'package:weatherapp/product/extension/temperature_units.dart';
 import 'dart:convert';
 import '../model/weather_five_days_with_three_hours_model.dart';
 import '../model/weather_model.dart';
@@ -13,7 +13,7 @@ abstract class IWeatherService<T> {
   IWeatherService({required String apiKey, required String baseUrl})
       : _apiKey = apiKey,
         _baseUrl = baseUrl;
-  Future<T?> getWeatherData();
+  Future<T?> getWeatherData({required String unit});
   Future<void> getLocationWithPermission() async {
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
@@ -26,32 +26,40 @@ abstract class IWeatherService<T> {
       _longitude = position.longitude;
     }
   }
+
+  String getApiUrl({required String tempUnit, required String evolvedUrl}) {
+    String units = tempUnit.toLowerCase();
+    if (tempUnit == TemperatureUnit.Default.name) {
+      return evolvedUrl;
+    }
+    return "$evolvedUrl&units=$units";
+  }
 }
 
-class CurrentWeatherService extends IWeatherService {
+class CurrentWeatherService extends IWeatherService<WeatherModel> {
   CurrentWeatherService({required super.apiKey, required super.baseUrl});
   @override
-  Future<WeatherModel?> getWeatherData() async {
+  Future<WeatherModel?> getWeatherData({required String unit}) async {
     if (_longitude != null && _latitude != null) {
-      final response = await http.get(Uri.parse(
-          "$_baseUrl/weather?lat=$_latitude&lon=$_longitude&units=metric&lang=tr&appid=$_apiKey"));
-      //TODO: lang ı languageCodes den sıcaklık ölçüsünü temperatureTypeExtension.name şeklinde kullan.
+      var evolvedUrl = "$_baseUrl/weather?lat=$_latitude&lon=$_longitude&lang=tr&appid=$_apiKey";
+      final response = await http.get(Uri.parse(getApiUrl(tempUnit: unit, evolvedUrl: evolvedUrl)));
       if (response.statusCode == 200) {
         return WeatherModel.fromJson(jsonDecode(response.body));
       }
     }
+    print(unit);
     return null;
   }
 }
 
-class WeatherServiceForFiveDaysWithThreeHours extends IWeatherService {
+class WeatherServiceForFiveDaysWithThreeHours extends IWeatherService<WeatherFiveDaysWithThreeHourModel> {
   WeatherServiceForFiveDaysWithThreeHours(
       {required super.apiKey, required super.baseUrl});
   @override
-  Future<WeatherFiveDaysWithThreeHourModel?> getWeatherData() async {
+  Future<WeatherFiveDaysWithThreeHourModel?> getWeatherData({required String unit}) async {
     if (_longitude != null && _latitude != null) {
-      final response = await http.get(Uri.parse(
-          "$_baseUrl/forecast?lat=$_latitude&lon=$_longitude&units=metric&lang=tr&appid=$_apiKey"));
+      var evolvedUrl = "$_baseUrl/forecast?lat=$_latitude&lon=$_longitude&lang=tr&appid=$_apiKey";
+      final response = await http.get(Uri.parse(getApiUrl(tempUnit: unit, evolvedUrl: evolvedUrl)));
       if (response.statusCode == 200) {
         final decodedData = json.decode(response.body);
         if (decodedData != null) {
@@ -59,6 +67,7 @@ class WeatherServiceForFiveDaysWithThreeHours extends IWeatherService {
         }
       }
     }
+    print(unit);
     return null;
   }
 }
@@ -71,14 +80,24 @@ class CityWeatherService {
       : _apiKey = apiKey,
         _baseUrl = baseUrl;
 
-  Future<WeatherModel?> getCityWeatherData(String? cityName) async {
+  String getApiUrl({required String tempUnit, required String evolvedUrl}) {
+    String units = tempUnit.toLowerCase();
+    if (tempUnit == TemperatureUnit.Default.name) {
+      return evolvedUrl;
+    }
+    return "$evolvedUrl&units=$units";
+  }
+
+  Future<WeatherModel?> getCityWeatherData(String? cityName,{required String unit}) async {
     if (cityName != null) {
-      final response = await http.get(Uri.parse(
-          "$_baseUrl/weather?q=$cityName&units=metric&lang=tr&appid=$_apiKey"));
+      var evolvedUrl = "$_baseUrl/weather?q=$cityName&lang=tr&appid=$_apiKey";
+      final response = await http.get(Uri.parse(getApiUrl(tempUnit: unit, evolvedUrl: evolvedUrl)));
       if (response.statusCode == 200) {
         return WeatherModel.fromJson(jsonDecode(response.body));
       }
     }
+    print(unit);
     return null;
   }
 }
+

@@ -227,7 +227,8 @@ mixin _SettingsViewUtility{
                             settingsState: state,
                             title: (state.temperatureItems?[index].temperatureName ?? "Unknown"),
                             onTap: () {
-                              context.read<SettingsViewCubit>().changeTemperatureUnitValue(index);
+                              context.read<SettingsViewCubit>().changeTemperatureUnitActiveValue(index);
+                              GlobalManageProvider.globalManageCubit.getTemperatureUnit(index);
                             },
                           );
                         },
