@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:weatherapp/product/global/cubit/global_manage_cubit.dart';
 import 'package:weatherapp/product/global/provider/global_manage_provider.dart';
+import 'package:weatherapp/service/notification_service.dart';
 
 import '../../service/shared_preferences.dart';
 
@@ -19,5 +20,10 @@ class MainInitialize{
   }
   void cacheInit(){
     _globalManageCubit.getCacheValues(SharedKeys.darkMode);
+  }
+
+  void initNotificationServiceInstanceAndNotificationFeats(){
+    NotificationService.init(NotificationService());
+    NotificationService.instance.initializeNotification(null);
   }
 }

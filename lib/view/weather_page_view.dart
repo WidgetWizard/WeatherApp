@@ -1,5 +1,6 @@
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:weatherapp/model/city_name_model.dart';
 import 'package:weatherapp/product/extension/context/general.dart';
@@ -7,6 +8,9 @@ import 'package:weatherapp/product/extension/context/icon_size.dart';
 import 'package:weatherapp/product/extension/context/padding.dart';
 import 'package:weatherapp/product/extension/context/size.dart';
 import 'package:weatherapp/product/extension/weather_parameters.dart';
+import 'package:weatherapp/product/global/cubit/global_manage_cubit.dart';
+import 'package:weatherapp/product/global/cubit/global_manage_state.dart';
+import 'package:weatherapp/service/city_name_sevice.dart';
 
 import 'package:weatherapp/view/%C5%9Fehirler.dart';
 import 'package:weatherapp/view/weather_page_view_parts/part_of_drawer.dart';
@@ -19,6 +23,8 @@ import 'package:weatherapp/view_model/weather_page_view_model.dart';
 import 'package:lottie/lottie.dart';
 
 import '../product/api/project_api.dart';
+import '../product/extension/temperature_units.dart';
+import '../product/global/provider/global_manage_provider.dart';
 import '../product/widgets/value_container.dart';
 
 class WeatherPageView extends StatefulWidget {
@@ -50,61 +56,83 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
         );
       },
       child: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height,
-              child: isLoading
-                  ? _loadingBarPlace()
-                  : Stack(
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: Stack(
+            children: [
+              BlocListener<GlobalManageCubit, GlobalManageState>(
+                listener: (context, state) {
+                  final newTemperatureUnit =
+                      state.temperatureUnit ?? TemperatureUnit.Metric.getTemperatureUnit();
+                  if (newTemperatureUnit != temperatureUnit) {
+                    _handleTemperatureUnitChange(newTemperatureUnit);
+                  }
+                },
+                child: isLoading
+                    ? _loadingBarPlace()
+                    : Scaffold(
+                  key: _scaffoldKey,
+                  endDrawer: PartOfWeatherPageDrawer(),
+                  backgroundColor: Colors.transparent,
+                  appBar: _weatherPageAppBar(context),
+                  body: Padding(
+                    padding:
+                    context.padding.mediumSymmetricHorizontal,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _weatherPageBackgroundImage(context),
-                        Scaffold(
-                          key: _scaffoldKey,
-                          endDrawer: PartOfWeatherPageDrawer(),
-                          backgroundColor: Colors.transparent,
-                          appBar: _weatherPageAppBar(context),
-                          body: Padding(
-                            padding: context.padding.mediumSymmetricHorizontal,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _cityText(context,
-                                    cityName: weatherModel?.cityName ??
-                                        stringUnknown),
-                                _dateText(context),
-                                _degreeText(context,
-                                    temp: weatherModel?.temp?.toInt()),
-                                _assetsAndWeatherInfoText(context,
-                                    mainCondition:
-                                        weatherModel?.mainCondition ??
-                                            stringUnknown,
-                                    weatherModel: weatherModel),
-                                _divider(context),
-                                _bottomComponent(context,
-                                    weatherModel: weatherModel)
-                              ],
-                            ),
-                          ),
-                        ),
+                        _cityText(context,
+                            cityName: weatherModel?.cityName ??
+                                stringUnknown),
+                        _dateText(context),
+                        _degreeText(context,
+                            temp: weatherModel?.temp?.toInt()),
+                        _assetsAndWeatherInfoText(context,
+                            mainCondition:
+                            weatherModel?.mainCondition ??
+                                stringUnknown,
+                            weatherModel: weatherModel),
+                        _divider(context),
+                        _bottomComponent(context,
+                            weatherModel: weatherModel)
                       ],
                     ),
-            ),
-          ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Future<void> get refresh async {
-    await initCurrentWeatherData();
-    setState(() {});
-    if (isLoading) {
-      while (isLoading) {
-        await Future.delayed(const Duration(seconds: 1));
-      }
-    }
+  Future<void> _handleTemperatureUnitChange(String newTemperatureUnit) async {
+    setState(() {
+      isLoading = true;
+      temperatureUnit = newTemperatureUnit;
+    });
+    await refresh;
+    setState(() {
+      isLoading = false;
+    });
   }
+
+  Future<void> get refresh async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      weatherModel = await initCurrentWeatherData();
+      print("$weatherModel : yeni veriler geldi!");
+    } catch (error) {
+      print("Hava durumu verileri alınamadı: $error");
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
 
   void _openDrawer() {
     _scaffoldKey.currentState!.openEndDrawer();
@@ -135,7 +163,7 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
     );
   }
 
-  Image _weatherPageBackgroundImage(BuildContext context) {
+/*  Image _weatherPageBackgroundImage(BuildContext context) {
     return Image.network(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
@@ -143,7 +171,7 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
       headers: ProjectApi().getHeaders,
       fit: BoxFit.cover,
     );
-  }
+  }*/
 }
 
 
@@ -154,6 +182,7 @@ class MyDelegate extends SearchDelegate {
 
   //? şehir isimlerini db mi yapalım uygulama içinde yoksa api mi kullanalım?
   List<String> searchResult = Searchresult;
+
   @override
   List<Widget>? buildActions(BuildContext context) => [
         IconButton(
@@ -172,7 +201,7 @@ class MyDelegate extends SearchDelegate {
   Widget buildResults(BuildContext context) {
     // FutureBuilder kullanarak asenkron veri çekme işlemi
     return FutureBuilder<WeatherModel?>(
-      future: _cityWeatherService.getCityWeatherData(query),
+      future: _cityWeatherService.getCityWeatherData(query, unit: GlobalManageProvider.globalManageCubit.state.temperatureUnit ?? TemperatureUnit.Metric.getTemperatureUnit()),
       builder: (BuildContext context, AsyncSnapshot<WeatherModel?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -385,107 +414,3 @@ mixin _PageUtility on State<WeatherPageView> {
     );
   }
 }
-
-class MyDelegate extends SearchDelegate {
-  final CityWeatherService _cityWeatherService = CityWeatherService(
-      apiKey: ProjectApi().getWeatherApi,
-      baseUrl: "https://api.openweathermap.org/data/2.5");
-
-  //? şehir isimlerini db mi yapalım uygulama içinde yoksa api mi kullanalım?
-  List<String> searchResult = Searchresult;
-  @override
-  List<Widget>? buildActions(BuildContext context) => [
-    IconButton(
-      onPressed: () => query = "",
-      icon: const Icon(Icons.clear),
-    )
-  ];
-
-  @override
-  Widget? buildLeading(BuildContext context) => IconButton(
-    onPressed: () => close(context, null),
-    icon: const Icon(Icons.arrow_back_ios_outlined),
-  );
-
-  @override
-  Widget buildResults(BuildContext context) {
-    // FutureBuilder kullanarak asenkron veri çekme işlemi
-    return FutureBuilder<WeatherModel?>(
-      future: _cityWeatherService.getCityWeatherData(query),
-      builder: (BuildContext context, AsyncSnapshot<WeatherModel?> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Hata: ${snapshot.error}'));
-        } else {
-          // Veri çekme işlemi başarılı olduysa, veriyi göster
-          WeatherModel? weatherData = snapshot.data;
-          return weatherData == null
-              ? const Center(child: Text(""))
-              : Center(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ListTile(
-                    title: Center(
-                        child: Text(weatherData.cityName ?? "Unknown")),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.thermostat_outlined),
-                    title: const Text("Sıcaklık"),
-                    trailing: Text("${weatherData.temp}"),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.cloud),
-                    title: const Text("Durum"),
-                    trailing: Text("${weatherData.mainCondition}"),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.air),
-                    title: const Text("Rüzgar"),
-                    trailing: Text("${weatherData.wind}"),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.water_damage),
-                    title: const Text("Nem"),
-                    trailing: Text("${weatherData.humidity}"),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.umbrella),
-                    title: const Text("Yağmur Oranı"),
-                    trailing: Text("${weatherData.rain ?? 0.0}"),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-      },
-    );
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    List<String> cityname =
-    Searchresult.where((element) => element.startsWith(query)).toList();
-
-    return ListView.builder(
-      itemCount: cityname.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          onTap: () {
-            query = cityname[index];
-            showResults(context); // Add this line
-          },
-          title: Text(cityname[index]),
-        );
-      },
-    );
-  }
-}
-
-//todo: settings de dil, theme, sıcaklık ayarları olucak!
-//bildirim sorulucak
-//sıcaklık seçeneği seçimi yapılıcak!

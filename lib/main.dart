@@ -5,8 +5,6 @@ import 'package:weatherapp/product/global/cubit/global_manage_state.dart';
 import 'package:weatherapp/product/global/provider/global_manage_provider.dart';
 
 import 'package:weatherapp/product/init/initialize.dart';
-import 'package:weatherapp/product/theme/dark_theme.dart';
-import 'package:weatherapp/product/theme/light_theme.dart';
 import 'package:weatherapp/view/weather_page_view.dart';
 import 'package:weatherapp/product/widgets/no_network.dart';
 import 'package:weatherapp/view_model/settings_view_cubit/settings_view_cubit.dart';
@@ -16,6 +14,7 @@ Future<void> main() async {
   await mainInitialize.sharedInit();
   mainInitialize.globalCubitInit();
   mainInitialize.cacheInit();
+  mainInitialize.initNotificationServiceInstanceAndNotificationFeats();
   runApp(
     MultiBlocProvider(
       providers: [
@@ -30,8 +29,6 @@ Future<void> main() async {
 class Main extends StatelessWidget {
   Main({Key? key}) : super(key: key);
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  final DarkTheme _darkTheme = DarkTheme();
-  final LightTheme _lightTheme = LightTheme();
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +60,8 @@ class Main extends StatelessWidget {
 }
 
 //todo:bug => bildirim izni istedikten sonra konum izni almıyor!
-//todo: drizzle diye bi hava durumu fotosu eklenmemiş yani images i yok!
+//todo: drizzle,mist diye bi hava durumu fotosu eklenmemiş yani images i yok!
 //todo: providerda cache ediliyor mu bu darkModeActive bilmiyorum ama uygulamayı geri çalıştırdıgımda false
 //todo: burda blocBuilder ie yapıldıgında sürekli olarak o metodu okuor galiba buna bir baksana!
 //todo: theme ayarlandı ama cache edilmesi gerekiyor!
+//todo: geçiçi olarak mist.gif ekledim! ve drizzle

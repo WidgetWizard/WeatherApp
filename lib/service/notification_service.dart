@@ -5,6 +5,17 @@ import '../main.dart';
 import '../view/error_page_view.dart';
 
 class NotificationService {
+
+  static NotificationService? _notificationService;
+
+  static void init(NotificationService notificationService){
+    _notificationService ??= notificationService;
+  }
+  static NotificationService get instance{
+    if(_notificationService == null) throw Exception("NotificationService is null");
+    return _notificationService!;
+  }
+
   Future<void> initializeNotification(Widget? onActionReceivedMethodForPage) async {
     AwesomeNotifications().initialize(
       null,
