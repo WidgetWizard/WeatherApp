@@ -61,6 +61,7 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
           height: MediaQuery.of(context).size.height,
           child: Stack(
             children: [
+              _weatherPageBackgroundImage(context),
               BlocListener<GlobalManageCubit, GlobalManageState>(
                 listener: (context, state) {
                   final newTemperatureUnit = state.temperatureUnit ??
@@ -180,7 +181,7 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
   }
 
 
-/*  Image _weatherPageBackgroundImage(BuildContext context) {
+  Image _weatherPageBackgroundImage(BuildContext context) {
     return Image.network(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
@@ -188,7 +189,7 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
       headers: ProjectApi().getHeaders,
       fit: BoxFit.cover,
     );
-  }*/
+  }
 }
 
 class MyDelegate extends SearchDelegate {

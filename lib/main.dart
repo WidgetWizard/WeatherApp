@@ -14,6 +14,7 @@ Future<void> main() async {
   await mainInitialize.sharedInit();
   mainInitialize.globalCubitInit();
   mainInitialize.cacheInit();
+  await mainInitialize.getLocationPermission();
   mainInitialize.initNotificationServiceInstanceAndNotificationFeats();
   runApp(
     MultiBlocProvider(
