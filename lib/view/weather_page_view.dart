@@ -61,6 +61,7 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
           height: MediaQuery.of(context).size.height,
           child: Stack(
             children: [
+              _weatherPageBackgroundImage(context),
               BlocListener<GlobalManageCubit, GlobalManageState>(
                 listener: (context, state) {
                   final newTemperatureUnit = state.temperatureUnit ??
@@ -180,7 +181,7 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
   }
 
 
-/*  Image _weatherPageBackgroundImage(BuildContext context) {
+  Image _weatherPageBackgroundImage(BuildContext context) {
     return Image.network(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
@@ -188,7 +189,7 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
       headers: ProjectApi().getHeaders,
       fit: BoxFit.cover,
     );
-  }*/
+  }
 }
 
 class MyDelegate extends SearchDelegate {
@@ -281,6 +282,7 @@ class MyDelegate extends SearchDelegate {
       builder: (BuildContext context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return ListView.builder(
+
             itemCount: 5,
             itemBuilder: (BuildContext context, int index) {
               return Column(
@@ -356,26 +358,30 @@ mixin _PageUtility on State<WeatherPageView> {
       {required String mainCondition, WeatherModel? weatherModel}) {
     return Padding(
       padding: context.padding.dynamicOnly(top: 0.02),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: context.padding.rightOnlyNormal,
-            child: Image.asset(
-                WeatherCondition.rain.getWeatherConditionGif(weatherModel) ??
-                    ""),
-          ),
-          Text(
-            mainCondition,
-            style: context.general.textTheme.titleLarge?.copyWith(
-              color: Colors.white,
-              fontSize: context.sized.dynamicHeigth(0.037),
-              shadows: <Shadow>[
-                shadow,
-              ],
+      child: Container(
+        height: context.sized.dynamicHeigth(0.06),
+        width: context.sized.width,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: context.padding.rightOnlyNormal,
+              child: Image.asset(
+                  WeatherCondition.rain.getWeatherConditionGif(weatherModel) ??
+                      ""),
             ),
-          ),
-        ],
+            Text(
+              mainCondition,
+              style: context.general.textTheme.titleLarge?.copyWith(
+                color: Colors.white,
+                fontSize: context.sized.dynamicHeigth(0.037),
+                shadows: <Shadow>[
+                  shadow,
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

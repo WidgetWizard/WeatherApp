@@ -1,5 +1,6 @@
 
 import 'package:flutter/cupertino.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:weatherapp/product/global/cubit/global_manage_cubit.dart';
 import 'package:weatherapp/product/global/provider/global_manage_provider.dart';
 import 'package:weatherapp/service/notification_service.dart';
@@ -15,7 +16,6 @@ class MainInitialize{
     print("init işlemleri tammalandı!");
   }
 
-
   void globalCubitInit(){
     _globalManageCubit = GlobalManageCubit();
     GlobalManageProvider.init(_globalManageCubit);
@@ -24,8 +24,15 @@ class MainInitialize{
     _globalManageCubit.getCacheValues(SharedKeys.darkMode);
   }
 
-  void initNotificationServiceInstanceAndNotificationFeats(){
+  Future<void> initNotificationServiceInstanceAndNotificationFeats() async {
     NotificationService.init(NotificationService());
-    NotificationService.instance.initializeNotification(null);
+    await NotificationService.instance.initializeNotification(null);
+  }
+
+  Future<void> getLocationPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
   }
 }

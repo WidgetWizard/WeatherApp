@@ -14,6 +14,7 @@ Future<void> main() async {
   await mainInitialize.sharedInit();
   mainInitialize.globalCubitInit();
   mainInitialize.cacheInit();
+  await mainInitialize.getLocationPermission();
   mainInitialize.initNotificationServiceInstanceAndNotificationFeats();
   runApp(
     MultiBlocProvider(
@@ -58,6 +59,3 @@ class Main extends StatelessWidget {
     );
   }
 }
-
-//todo:bug => bildirim izni istedikten sonra konum izni almıyor!
-//todo: backgroundu kapattım ama resimler gelmiyor engel oluyorda bana başta! en son ayarla!
