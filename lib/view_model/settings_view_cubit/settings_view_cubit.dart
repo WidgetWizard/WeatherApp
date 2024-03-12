@@ -3,42 +3,44 @@ import 'package:weatherapp/product/extension/temperature_units.dart';
 import 'package:weatherapp/view_model/settings_view_cubit/settings_view_state.dart';
 
 import '../../model/temperature_model.dart';
+import '../../service/shared_preferences.dart';
 
 class SettingsViewCubit extends Cubit<SettingsViewState> {
   SettingsViewCubit() : super(SettingsViewState()){
-    setDefaultTemperatureItems();
+    setCachedAndDefaultTemperatureItems();
   }
 
-
-  void changeTemperatureUnitActiveValue(int index){
+  void changeTemperatureUnitActiveValue(int index) {
     emit(state.copyWith(isLoading: true));
     final tempItems = state.temperatureItems ?? [];
-    if((tempItems[index].isSelected) == false){
-      tempItems[index].isSelected = true;
-    }
-    else if(tempItems[index].isSelected){
-      tempItems[index].isSelected = true;
-    }
-    for(var item in tempItems){
-      if(tempItems.indexOf(item) != index){
-        item.isSelected = false;
+    for (var i = 0; i < tempItems.length; i++) {
+      if (i == index) {
+        tempItems[i].isSelected = true;
+        SharedManager.instance.saveString(SharedKeys.temperatureUnit, tempItems[index].temperatureName);
+      } else {
+        tempItems[i].isSelected = false;
       }
     }
-    emit(state.copyWith(temperatureItems: tempItems,isLoading: false,));
+    emit(state.copyWith(temperatureItems: tempItems, isLoading: false));
   }
 
-  void setDefaultTemperatureItems(){
+  void setCachedAndDefaultTemperatureItems() {
     emit(state.copyWith(isLoading: true));
     final temperatureItems = [
-      TemperatureModel(temperatureName: TemperatureUnit.Metric.name, isSelected: true),
+      TemperatureModel(temperatureName: TemperatureUnit.Metric.name, isSelected: false),
       TemperatureModel(temperatureName: TemperatureUnit.Imperial.name, isSelected: false),
       TemperatureModel(temperatureName: TemperatureUnit.Default.name, isSelected: false),
-/*      TemperatureModel(temperatureName: 'Celsius (°C)', isSelected: true),
-      TemperatureModel(temperatureName: "Fahrenheit (°F)", isSelected: false),
-      TemperatureModel(temperatureName: "Kelvin (K)", isSelected: false),*/
     ];
-    emit(state.copyWith(temperatureItems: temperatureItems,isLoading: false));
+    final tempValue = SharedManager.instance.getString(SharedKeys.temperatureUnit);
+    if (tempValue != null) {
+      final selectedUnit = TemperatureUnit.values.firstWhere(
+            (unit) => unit.name.toLowerCase() == tempValue.toLowerCase(),
+        orElse: () => TemperatureUnit.Default,
+      );
+      for (var item in temperatureItems) {
+        item.isSelected = item.temperatureName == selectedUnit.name;
+      }
+    }
+    emit(state.copyWith(temperatureItems: temperatureItems, isLoading: false));
   }
 }
-
-//todo:sıcaklık birimi değişim kodunu yazmam gerekiyor şuanda burda! ondan sonra değişimi ui de denicem

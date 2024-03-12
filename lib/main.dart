@@ -61,5 +61,3 @@ class Main extends StatelessWidget {
 
 //todo:bug => bildirim izni istedikten sonra konum izni almıyor!
 //todo: backgroundu kapattım ama resimler gelmiyor engel oluyorda bana başta! en son ayarla!
-
-

@@ -36,6 +36,7 @@ class WeatherPageView extends StatefulWidget {
 
 class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     var stringUnknown = "Unknown";
@@ -62,8 +63,8 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
             children: [
               BlocListener<GlobalManageCubit, GlobalManageState>(
                 listener: (context, state) {
-                  final newTemperatureUnit =
-                      state.temperatureUnit ?? TemperatureUnit.Metric.getTemperatureUnit();
+                  final newTemperatureUnit = state.temperatureUnit ??
+                      TemperatureUnit.Metric.getTemperatureUnit();
                   if (newTemperatureUnit != temperatureUnit) {
                     _handleTemperatureUnitChange(newTemperatureUnit);
                   }
@@ -71,34 +72,32 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
                 child: isLoading
                     ? _loadingBarPlace()
                     : Scaffold(
-                  key: _scaffoldKey,
-                  endDrawer: PartOfWeatherPageDrawer(),
-                  backgroundColor: Colors.transparent,
-                  appBar: _weatherPageAppBar(context),
-                  body: Padding(
-                    padding:
-                    context.padding.mediumSymmetricHorizontal,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _cityText(context,
-                            cityName: weatherModel?.cityName ??
-                                stringUnknown),
-                        _dateText(context),
-                        _degreeText(context,
-                            temp: weatherModel?.temp?.toInt()),
-                        _assetsAndWeatherInfoText(context,
-                            mainCondition:
-                            weatherModel?.mainCondition ??
-                                stringUnknown,
-                            weatherModel: weatherModel),
-                        _divider(context),
-                        _bottomComponent(context,
-                            weatherModel: weatherModel)
-                      ],
-                    ),
-                  ),
-                ),
+                        key: _scaffoldKey,
+                        endDrawer: PartOfWeatherPageDrawer(),
+                        backgroundColor: Colors.transparent,
+                        appBar: _weatherPageAppBar(context),
+                        body: Padding(
+                          padding: context.padding.mediumSymmetricHorizontal,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _cityText(context,
+                                  cityName:
+                                      weatherModel?.cityName ?? stringUnknown),
+                              _dateText(context),
+                              _degreeText(context,
+                                  temp: weatherModel?.temp?.toInt()),
+                              _assetsAndWeatherInfoText(context,
+                                  mainCondition: weatherModel?.mainCondition ??
+                                      stringUnknown,
+                                  weatherModel: weatherModel),
+                              _divider(context),
+                              _bottomComponent(context,
+                                  weatherModel: weatherModel)
+                            ],
+                          ),
+                        ),
+                      ),
               ),
             ],
           ),
@@ -133,7 +132,6 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
     });
   }
 
-
   void _openDrawer() {
     _scaffoldKey.currentState!.openEndDrawer();
   }
@@ -163,6 +161,25 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
     );
   }
 
+  Padding _degreeText(BuildContext context, {required int? temp}) {
+    return Padding(
+      padding: context.padding.dynamicOnly(top: 0.15),
+      child: Text(
+        '${temp ?? "unknown"}${getTemperatureUnitSymbol(temperatureUnit)}',
+        style: context.general.textTheme.displayLarge?.copyWith(
+          color: Colors.white,
+          fontSize: temp == null
+              ? context.sized.dynamicHeigth(0.05)
+              : context.sized.dynamicHeigth(0.12),
+          shadows: <Shadow>[
+            shadow,
+          ],
+        ),
+      ),
+    );
+  }
+
+
 /*  Image _weatherPageBackgroundImage(BuildContext context) {
     return Image.network(
       width: MediaQuery.of(context).size.width,
@@ -173,7 +190,6 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
     );
   }*/
 }
-
 
 class MyDelegate extends SearchDelegate {
   final CityWeatherService _cityWeatherService = CityWeatherService(
@@ -201,7 +217,9 @@ class MyDelegate extends SearchDelegate {
   Widget buildResults(BuildContext context) {
     // FutureBuilder kullanarak asenkron veri çekme işlemi
     return FutureBuilder<WeatherModel?>(
-      future: _cityWeatherService.getCityWeatherData(query, unit: GlobalManageProvider.globalManageCubit.state.temperatureUnit ?? TemperatureUnit.Metric.getTemperatureUnit()),
+      future: _cityWeatherService.getCityWeatherData(query,
+          unit: GlobalManageProvider.globalManageCubit.state.temperatureUnit ??
+              TemperatureUnit.Metric.getTemperatureUnit()),
       builder: (BuildContext context, AsyncSnapshot<WeatherModel?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -276,8 +294,8 @@ class MyDelegate extends SearchDelegate {
         } else {
           // build a list of widgets based on the List<String>
           return ListView.builder(
-            itemCount: snapshot.data!
-                .length, // todo: bütün itemleri tut listeye çevir ve onu döndür yoksa her seferinde apiye istek atar
+            itemCount: snapshot.data!.length,
+            // todo: bütün itemleri tut listeye çevir ve onu döndür yoksa her seferinde apiye istek atar
             itemBuilder: (BuildContext context, int index) {
               return ListTile(
                 title: Text(snapshot.data![index].cityName!),
@@ -309,15 +327,18 @@ mixin _PageUtility on State<WeatherPageView> {
         children: [
           ValueContainer(
               valueName: WeatherParameters.wind.capitalizeValue,
-              percent: WeatherParameters.wind.getWeatherParametersPercent(weatherModel?.wind),
+              percent: WeatherParameters.wind
+                  .getWeatherParametersPercent(weatherModel?.wind),
               isPercentage: true),
           ValueContainer(
               valueName: WeatherParameters.rain.capitalizeValue,
-              percent: WeatherParameters.rain.getWeatherParametersPercent(weatherModel?.rain),
+              percent: WeatherParameters.rain
+                  .getWeatherParametersPercent(weatherModel?.rain),
               isRain: true),
           ValueContainer(
             valueName: WeatherParameters.humidity.capitalizeValue,
-            percent: WeatherParameters.humidity.getWeatherParametersPercent(weatherModel?.humidity?.toDouble()),
+            percent: WeatherParameters.humidity.getWeatherParametersPercent(
+                weatherModel?.humidity?.toDouble()),
           ),
         ],
       ),
@@ -359,22 +380,18 @@ mixin _PageUtility on State<WeatherPageView> {
     );
   }
 
-  Padding _degreeText(BuildContext context, {required int? temp}) {
-    return Padding(
-      padding: context.padding.dynamicOnly(top: 0.15),
-      child: Text(
-        '${temp ?? "unknown"}°',
-        style: context.general.textTheme.displayLarge?.copyWith(
-          color: Colors.white,
-          fontSize: temp == null
-              ? context.sized.dynamicHeigth(0.05)
-              : context.sized.dynamicHeigth(0.12),
-          shadows: <Shadow>[
-            shadow,
-          ],
-        ),
-      ),
-    );
+
+  String getTemperatureUnitSymbol(String temperatureUnit){
+    if(temperatureUnit == TemperatureUnit.Metric.name){
+      return "°C";
+    }
+    else if(temperatureUnit == TemperatureUnit.Imperial.name){
+      return "°K";
+    }
+    else if(temperatureUnit == TemperatureUnit.Imperial.name){
+      return "°F";
+    }
+    return "";
   }
 
   Text _dateText(BuildContext context) {
