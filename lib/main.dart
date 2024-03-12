@@ -60,7 +60,6 @@ class Main extends StatelessWidget {
 }
 
 //todo:bug => bildirim izni istedikten sonra konum izni almıyor!
-//todo: providerda cache ediliyor mu bu darkModeActive bilmiyorum ama uygulamayı geri çalıştırdıgımda false
-//todo: burda blocBuilder ie yapıldıgında sürekli olarak o metodu okuor galiba buna bir baksana!
-//todo: theme ayarlandı ama cache edilmesi gerekiyor!
 //todo: backgroundu kapattım ama resimler gelmiyor engel oluyorda bana başta! en son ayarla!
+
+

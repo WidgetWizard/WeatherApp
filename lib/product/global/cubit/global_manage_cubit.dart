@@ -33,9 +33,9 @@ class GlobalManageCubit extends Cubit<GlobalManageState> {
   }
 
   ThemeData changeThemeDataValue(){
-    emit(state.copyWith(isLoading: true));
     final DarkTheme _darkTheme = DarkTheme();
     final LightTheme _lightTheme = LightTheme();
+    emit(state.copyWith(isLoading: true));
     ThemeData tempThemeData = ThemeData();
     if(state.darkModeIsActive ?? false){
       tempThemeData = _darkTheme.theme;
