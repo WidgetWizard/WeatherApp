@@ -59,5 +59,3 @@ class Main extends StatelessWidget {
     );
   }
 }
-
-//todo: backgroundu kapattım ama resimler gelmiyor engel oluyorda bana başta! en son ayarla!

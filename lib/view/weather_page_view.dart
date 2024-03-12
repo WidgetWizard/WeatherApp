@@ -282,6 +282,7 @@ class MyDelegate extends SearchDelegate {
       builder: (BuildContext context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return ListView.builder(
+
             itemCount: 5,
             itemBuilder: (BuildContext context, int index) {
               return Column(
