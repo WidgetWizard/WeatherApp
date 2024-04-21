@@ -9,6 +9,7 @@ enum WeatherCondition {
   clouds,
   haze,
   mist,
+  drizzle,
 }
 
 extension WeatherConditionExtension on WeatherCondition {
