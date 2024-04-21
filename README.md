@@ -77,6 +77,11 @@ This project is licensed under the MIT License. For more information, see the LI
 
 \* = Works smoothly in Turkish, English, Arabic, and German languages.
 
+## Katkıda bulunanlar/Contribitors
+[![Codriot](https://github.com/codriot.png)](https://github.com/codriot) [![Furkan-Yildirim45](https://github.com/Furkan-Yildirim45.png)](https://github.com/Furkan-Yildirim45)         
+
+      Codriot                                                       Furkan-Yildirim45 
+      
 ![mainview](https://github.com/WidgetWizard/WeatherApp/assets/146637002/cd1ebef1-19a4-4cfb-a1c0-6577f663022f)
 ![setting](https://github.com/WidgetWizard/WeatherApp/assets/146637002/0348c13b-d8d0-47bc-85e3-2012aa67ea1e)
 ![settingekranı](https://github.com/WidgetWizard/WeatherApp/assets/146637002/564e784d-8ffb-4352-938a-0ec1677ede8f)
