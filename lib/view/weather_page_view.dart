@@ -11,8 +11,6 @@ import 'package:weatherapp/product/extension/weather_parameters.dart';
 import 'package:weatherapp/product/global/cubit/global_manage_cubit.dart';
 import 'package:weatherapp/product/global/cubit/global_manage_state.dart';
 import 'package:weatherapp/service/city_name_sevice.dart';
-
-import 'package:weatherapp/view/%C5%9Fehirler.dart';
 import 'package:weatherapp/view/weather_page_view_parts/part_of_drawer.dart';
 
 import '../model/weather_model.dart';
@@ -180,7 +178,6 @@ class _WeatherPageViewState extends WeatherPageViewModel with _PageUtility {
     );
   }
 
-
   Image _weatherPageBackgroundImage(BuildContext context) {
     return Image.network(
       width: MediaQuery.of(context).size.width,
@@ -197,9 +194,8 @@ class MyDelegate extends SearchDelegate {
       apiKey: ProjectApi().getWeatherApi,
       baseUrl: "https://api.openweathermap.org/data/2.5");
 
-  //? şehir isimlerini db mi yapalım uygulama içinde yoksa api mi kullanalım?
-  List<String> searchResult = Searchresult;
-
+  @override
+  String get searchFieldLabel => "Şehir Ara";
   @override
   List<Widget>? buildActions(BuildContext context) => [
         IconButton(
@@ -282,12 +278,9 @@ class MyDelegate extends SearchDelegate {
       builder: (BuildContext context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return ListView.builder(
-
             itemCount: 5,
             itemBuilder: (BuildContext context, int index) {
-              return Column(
-                children: [ListTile(title: Text("  ")), Divider()],
-              );
+              return SizedBox();
             },
           ); // show a loading spinner while waiting
         } else if (snapshot.hasError) {
@@ -386,15 +379,12 @@ mixin _PageUtility on State<WeatherPageView> {
     );
   }
 
-
-  String getTemperatureUnitSymbol(String temperatureUnit){
-    if(temperatureUnit == TemperatureUnit.Metric.name){
+  String getTemperatureUnitSymbol(String temperatureUnit) {
+    if (temperatureUnit == TemperatureUnit.Metric.name) {
       return "°C";
-    }
-    else if(temperatureUnit == TemperatureUnit.Imperial.name){
+    } else if (temperatureUnit == TemperatureUnit.Imperial.name) {
       return "°K";
-    }
-    else if(temperatureUnit == TemperatureUnit.Imperial.name){
+    } else if (temperatureUnit == TemperatureUnit.Imperial.name) {
       return "°F";
     }
     return "";

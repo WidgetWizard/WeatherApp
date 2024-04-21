@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 var lang = 'tr';
 
 enum temperatureType { celsius, fahrenheit }
@@ -11,6 +13,16 @@ extension TemperatureTypeExtension on temperatureType {
         return 'imperial';
     }
   }
+}
+
+class Appconst {
+  static const supportedLocales = [
+    Locale('en', 'US'),
+    Locale('tr', 'TR'),
+    Locale('ar', 'SA'),
+    Locale('de', 'DE')
+  ];
+  static const path = 'assets/translations';
 }
 
 var languageCodes = {

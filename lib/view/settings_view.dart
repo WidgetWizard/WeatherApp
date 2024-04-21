@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,8 +16,10 @@ import 'package:weatherapp/service/shared_preferences.dart';
 import 'package:weatherapp/view_model/settings_view_cubit/settings_view_cubit.dart';
 import 'package:weatherapp/view_model/settings_view_cubit/settings_view_state.dart';
 
-class SettingsView extends StatelessWidget with _SettingsViewUtility{
-  const SettingsView({Key? key,}) : super(key: key);
+class SettingsView extends StatelessWidget with _SettingsViewUtility {
+  const SettingsView({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext buildContext) {
@@ -34,7 +37,7 @@ class SettingsView extends StatelessWidget with _SettingsViewUtility{
                   children: [
                     _settingsTitleAndBackButton(buildContext),
                     _SettingsCard(
-                      title: "Language",
+                      title: "Language".tr(),
                       leadingIcon: Icons.question_answer_outlined,
                       trailingWidget: _languageContent(context),
                       leadingColor: Color(0xff3b78c0),
@@ -54,7 +57,8 @@ class SettingsView extends StatelessWidget with _SettingsViewUtility{
                       circleAvatarBackgroundColor: Color(0xffebebf1),
                       leadingIcon: Icons.thermostat_outlined,
                       leadingColor: Color(0xffff5050),
-                      trailingWidget: _settingsCardButton(context, onPressed: () {
+                      trailingWidget:
+                          _settingsCardButton(context, onPressed: () {
                         _showTemperatureUnitDialog(context);
                       }),
                     ),
@@ -70,14 +74,14 @@ class SettingsView extends StatelessWidget with _SettingsViewUtility{
 }
 
 class _SettingsCard extends StatelessWidget {
-  const _SettingsCard(
-      {Key? key,
-      required this.title,
-      required this.leadingIcon,
-      required this.trailingWidget,
-      required this.leadingColor,
-      required this.circleAvatarBackgroundColor,})
-      : super(key: key);
+  const _SettingsCard({
+    Key? key,
+    required this.title,
+    required this.leadingIcon,
+    required this.trailingWidget,
+    required this.leadingColor,
+    required this.circleAvatarBackgroundColor,
+  }) : super(key: key);
   final String title;
   final IconData leadingIcon;
   final Color leadingColor;
@@ -91,7 +95,9 @@ class _SettingsCard extends StatelessWidget {
       elevation: 0,
       child: ListTile(
           contentPadding: EdgeInsets.zero,
-          title: Text(title, style: GlobalManageProvider.globalManageCubit.state.themeData?.textTheme.titleLarge),
+          title: Text(title,
+              style: GlobalManageProvider
+                  .globalManageCubit.state.themeData?.textTheme.titleLarge),
           leading: CircleAvatar(
               backgroundColor: circleAvatarBackgroundColor,
               radius: 25,
@@ -105,19 +111,16 @@ class _SettingsCard extends StatelessWidget {
   }
 }
 
-
-mixin _SettingsViewUtility{
-  Padding _settingsCardButton(BuildContext context,{required void Function() onPressed}) {
+mixin _SettingsViewUtility {
+  Padding _settingsCardButton(BuildContext context,
+      {required void Function() onPressed}) {
     return Padding(
       padding: context.padding.dynamicOnly(left: 0.01),
       child: CustomElevatedButton(
         width: context.sized.width * 0.12,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Icon(
-            size: 16,
-            Icons.arrow_forward_ios_outlined,
-            color: Colors.black
-        ),
+            size: 16, Icons.arrow_forward_ios_outlined, color: Colors.black),
         onPressed: onPressed,
         elevation: 0,
         backgroundColor: Color(0xffebebf1),
@@ -152,7 +155,8 @@ mixin _SettingsViewUtility{
             ),
           ),
           Text('Settings',
-              style: GlobalManageProvider.globalManageCubit.state.themeData?.textTheme.headlineMedium),
+              style: GlobalManageProvider
+                  .globalManageCubit.state.themeData?.textTheme.headlineMedium),
         ],
       ),
     );
@@ -169,25 +173,33 @@ mixin _SettingsViewUtility{
             style: context.general.textTheme.titleSmall
                 ?.copyWith(color: Colors.grey),
           ),
-          _settingsCardButton(context, onPressed: () {  }),
+          _settingsCardButton(context, onPressed: () {}),
         ],
       ),
     );
   }
 
-  Card _temperatureUnitCard({required String title,required void Function() onTap,required SettingsViewState settingsState,required int index}) {
+  Card _temperatureUnitCard(
+      {required String title,
+      required void Function() onTap,
+      required SettingsViewState settingsState,
+      required int index}) {
     return Card(
       child: ListTile(
-        title: Center(child: Text(title,style: GlobalManageProvider.globalManageCubit.state.themeData?.textTheme.titleLarge,)),
+        title: Center(
+            child: Text(
+          title,
+          style: GlobalManageProvider
+              .globalManageCubit.state.themeData?.textTheme.titleLarge,
+        )),
         onTap: onTap,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       color: (settingsState.temperatureItems?[index].isSelected ?? false)
           ? Color(0xff0f1bbf)
-          : GlobalManageProvider.globalManageCubit.state.themeData?.cardTheme.color,
+          : GlobalManageProvider
+              .globalManageCubit.state.themeData?.cardTheme.color,
     );
   }
 
@@ -202,8 +214,8 @@ mixin _SettingsViewUtility{
                   .themeData?.dialogTheme.backgroundColor,
               title: Text(
                 'Select Temperature Unit',
-                style: GlobalManageProvider.globalManageCubit.state.themeData
-                    ?.textTheme.headlineSmall,
+                style: GlobalManageProvider
+                    .globalManageCubit.state.themeData?.textTheme.headlineSmall,
               ),
               content: SingleChildScrollView(
                 child: ListBody(
@@ -218,10 +230,15 @@ mixin _SettingsViewUtility{
                           return _temperatureUnitCard(
                             index: index,
                             settingsState: state,
-                            title: (state.temperatureItems?[index].temperatureName ?? "Unknown"),
+                            title: (state
+                                    .temperatureItems?[index].temperatureName ??
+                                "Unknown"),
                             onTap: () {
-                              context.read<SettingsViewCubit>().changeTemperatureUnitActiveValue(index);
-                              GlobalManageProvider.globalManageCubit.getTemperatureUnit(index);
+                              context
+                                  .read<SettingsViewCubit>()
+                                  .changeTemperatureUnitActiveValue(index);
+                              GlobalManageProvider.globalManageCubit
+                                  .getTemperatureUnit(index);
                             },
                           );
                         },

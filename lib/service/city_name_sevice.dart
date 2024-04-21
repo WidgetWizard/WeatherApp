@@ -11,7 +11,9 @@ Future<List<CityNameModel>> fetchCityName(String query) async {
     List<CityNameModel> cityName = List.empty(growable: true);
     data.forEach((element) {
       var cityNameModel = CityNameModel.fromJson(element);
-      if (cityNameModel.cityName!.toLowerCase().contains(query.toLowerCase())) {
+      if (cityNameModel.cityName!
+          .toLowerCase()
+          .startsWith(query.toLowerCase())) {
         cityName.add(cityNameModel);
       }
     });
